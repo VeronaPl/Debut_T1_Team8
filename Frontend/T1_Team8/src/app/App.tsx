@@ -1,10 +1,8 @@
+import { useAppRoutes } from '../pages';
 import './App.scss'
 
 export const App = () => {
-
-  return (
-    <>
-      <div>App</div>
-    </>
-  )
+  
+  const appRoutes = useAppRoutes();
+  return appRoutes;
 }
