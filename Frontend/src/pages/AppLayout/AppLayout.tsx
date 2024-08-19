@@ -1,13 +1,25 @@
+import React, { useEffect } from 'react'
+import { Outlet, useLocation } from 'react-router-dom';
+import { userStore } from '../../app/store/userStore';
+import { observer } from 'mobx-react-lite';
+import "./AppLayout.scss"; 
 
-import React from 'react'
-import { Outlet } from 'react-router-dom';
 
+export const AppLayout = observer( ():JSX.Element => {
 
-import "./AppLayout.scss"
+    function ScrollToTop() {
+        const { pathname } = useLocation();
+      
+        useEffect(() => {
+          window.scrollTo(0, 0);
+        }, [pathname]);
+      
+        return null
+    }
 
-export const AppLayout = ():JSX.Element => {
     return (
         <div>
+            <ScrollToTop/>
             <header>
                 <h1>AppHeader</h1>
             </header>
@@ -16,4 +28,4 @@ export const AppLayout = ():JSX.Element => {
             </main>
         </div>
     );
-}
+} )

@@ -6,42 +6,47 @@ import { UsersPage } from '../UsersPage';
 import { OwnersPage } from '../OwnersPage';
 import { TransactionsPage } from '../TransactionsPage';
 import { ProfilePage } from '../ProfilePage';
+import { DefaultRoute } from './defaultRoute';
 import { Navigate } from 'react-router-dom';
+import { withAuth } from './withAuth';
+import { withoutAuth } from './withoutAuth';
+import { isNotUser } from './isnotUser';
+import { isAdmin } from './isAdmin';
 
 
 export const routesList = () => {
     return [
         {
             path: "/",
-            element: <Navigate to="/login" />
+            element: <DefaultRoute />
         }, 
         {
             path: "/login",
-            element: <LoginPage />
+            element: React.createElement(withoutAuth(LoginPage)),
         },
         {
             path: "/register",
-            element: <RegisterPage />
+            element: React.createElement(withoutAuth(RegisterPage)),
         },
         {
             path: "/cfds",
-            element: <CFDsPage />
+            element: React.createElement(isNotUser(CFDsPage)),
         },
         {
             path: "/users",
-            element: <UsersPage />
+            element: React.createElement(isNotUser(UsersPage)),
         },
         {
             path: "/owners",
-            element: <OwnersPage />
+            element: React.createElement(isAdmin(OwnersPage)),
         },
         {
             path: "/transactions",
-            element: <TransactionsPage />
+            element: React.createElement(withAuth(TransactionsPage)),
         },
         {
             path: "/:profile",
-            element: <ProfilePage />
+            element: React.createElement(withAuth(ProfilePage)),
         }
     ]
 }
