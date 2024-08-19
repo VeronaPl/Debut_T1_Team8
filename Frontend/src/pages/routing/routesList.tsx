@@ -1,6 +1,11 @@
 import React from 'react'
-import { CFDPage } from '../CFDPage/CFDPage';
-import { LoginPage } from '../LoginPage/LoginPage';
+import { CFDsPage } from '../CFDsPage';
+import { LoginPage } from '../LoginPage';
+import { RegisterPage } from '../RegisterPage';
+import { UsersPage } from '../UsersPage';
+import { OwnersPage } from '../OwnersPage';
+import { TransactionsPage } from '../TransactionsPage';
+import { ProfilePage } from '../ProfilePage';
 import { Navigate } from 'react-router-dom';
 
 
@@ -15,8 +20,28 @@ export const routesList = () => {
             element: <LoginPage />
         },
         {
-            path: "/cfd",
-            element: <CFDPage />
+            path: "/register",
+            element: <RegisterPage />
+        },
+        {
+            path: "/cfds",
+            element: <CFDsPage />
+        },
+        {
+            path: "/users",
+            element: <UsersPage />
+        },
+        {
+            path: "/owners",
+            element: <OwnersPage />
+        },
+        {
+            path: "/transactions",
+            element: <TransactionsPage />
+        },
+        {
+            path: "/:profile",
+            element: <ProfilePage />
         }
     ]
 }
