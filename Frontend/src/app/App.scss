@@ -1,0 +1,67 @@
+// @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+@font-face {
+  font-family: "ALS-hauss";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local("ALS-Hauss"), url(/Frontend/T1_Team8/src/shared/assets/fonts/ALSHauss-Regular.woff2) format("woff2"),url(/Frontend/T1_Team8/src/shared/assets/fonts/ALSHauss-Regular.woff) format("woff")
+}
+
+@font-face {
+  font-family: "ALS-hauss";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: local("ALS-Hauss"), url(/Frontend/T1_Team8/src/shared/assets/fonts/ALSHauss-Medium.woff2) format("woff2"),url(/Frontend/T1_Team8/src/shared/assets/fonts/ALSHauss-Medium.woff) format("woff")
+}
+
+@font-face {
+  font-family: "ALS-hauss";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local("ALS-Hauss"), url(/Frontend/T1_Team8/src/shared/assets/fonts/ALSHauss-Bold.woff2) format("woff2"),url(/Frontend/T1_Team8/src/shared/assets/fonts/ALSHauss-Bold.woff) format("woff")
+}
+
+$bg-color: #fff;
+$backgoungColorPages: #fff;
+$fontFamily: "ALS-hauss", Arial, Helvetica, sans-serif;
+$yellow: #E9BD24;
+$purple: #9B3AD7;
+$blue: #0039CB;
+$default-font-size: 18px;
+$nav-container-bg: #161228;
+
+$media-breakpoint-768: 768px;
+$media-breakpoint-1000: 1000px;
+$media-breakpoint-1280: 1280px;
+$media-breakpoint-1440: 1440px;
+$media-breakpoint-480: 480px;
+
+
+
+:root {
+  font-family: $fontFamily;
+  color: black;
+  background-color: $backgoungColorPages;
+  font-size: $default-font-size;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: $bg-color;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+h1 {
+  margin: 0;
+}
+
