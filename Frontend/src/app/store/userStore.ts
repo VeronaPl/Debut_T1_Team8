@@ -4,20 +4,22 @@ class UserAuthorization {
     token = "";
     userId = "";
     userName = "username";
-    userRole = "user"; // admin / owner / user
+    userRole = "admin"; // admin / owner / user
     sessionExpiry = 0; // Время через которое заканчивается сессия пользователя
-    isAuth = false;
+    isAuth = true;
+    money = 50;
 
     constructor() {
         makeAutoObservable(this);
     }
 
-    setUserData(token: string, userId: string, userName: string, role: string, expiry: number) {
+    setUserData(token: string, userId: string, userName: string, role: string, expiry: number, money: number) {
         this.token = token;
         this.userId = userId;
         this.userName = userName;
         this.userRole = role;
         this.sessionExpiry = expiry;
+        this.money = money;
     }
 
     // метод для установки статуса авторизации
@@ -36,6 +38,7 @@ class UserAuthorization {
         this.userRole = "";
         this.sessionExpiry = 0;
         this.isAuth = false;
+        this.money = 0;
     }
 }
 

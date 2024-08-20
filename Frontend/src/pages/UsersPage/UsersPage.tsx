@@ -5,7 +5,7 @@ import './UsersPage.scss';
 export const UsersPage = ():JSX.Element => {
     return (
         <div>
-            <h1>UsersPage</h1>
+            <h1>Список пользователей</h1>
         </div>
     );
 }

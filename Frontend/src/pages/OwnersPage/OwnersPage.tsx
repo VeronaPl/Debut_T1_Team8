@@ -5,7 +5,7 @@ import './OwnersPage.scss';
 export const OwnersPage = ():JSX.Element => {
     return (
         <div>
-            <h1>OwnersPage</h1>
+            <h1>Список владельцев</h1>
         </div>
     );
 }

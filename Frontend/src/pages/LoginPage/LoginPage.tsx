@@ -4,7 +4,7 @@ import './LoginPage.scss';
 export const LoginPage = ():JSX.Element => {
     return (    
         <div>
-            <h1>LoginPage</h1>
+            <h1>Вход</h1>
         </div>
     );
 }

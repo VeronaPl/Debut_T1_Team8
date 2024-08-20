@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router-dom';
 import { userStore } from '../../app/store/userStore';
 import { observer } from 'mobx-react-lite';
+import { Header } from '../../widgets/Header';
 import "./AppLayout.scss"; 
 
 
@@ -18,14 +19,17 @@ export const AppLayout = observer( ():JSX.Element => {
     }
 
     return (
-        <div>
+        <div className='layout-wrap'>
             <ScrollToTop/>
             <header>
-                <h1>AppHeader</h1>
+                <Header />
             </header>
-            <main>
-                <Outlet />
-            </main>
+            <div className="app-layout">
+                <main>
+                    <Outlet />
+                </main>
+            </div>
+            
         </div>
     );
 } )
