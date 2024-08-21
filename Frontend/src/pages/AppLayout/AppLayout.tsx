@@ -2,7 +2,8 @@ import React, { useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router-dom';
 import { userStore } from '../../app/store/userStore';
 import { observer } from 'mobx-react-lite';
-import { Header } from '../../widgets/Header';
+import { Header } from '../../widgets';
+import { SideMenu } from '../../widgets';
 import "./AppLayout.scss"; 
 
 
@@ -26,10 +27,24 @@ export const AppLayout = observer( ():JSX.Element => {
             </header>
             <div className="app-layout">
                 <main>
-                    <Outlet />
+                    {
+                        !userStore.isAuth ? <Outlet /> : <></>
+                    }
+                    {
+                        userStore.isAuth ? <div className="ProfilePage">
+                                                <div className="ProfilePage__wrap">
+                                                    <div className="SideMenu__container">
+                                                        <SideMenu />
+                                                    </div>
+                                                    <section className="MainContent">
+                                                        <Outlet />
+                                                    </section>
+                                                </div>
+                                            </div>
+                         : <></>
+                    }
                 </main>
             </div>
-            
         </div>
     );
 } )
