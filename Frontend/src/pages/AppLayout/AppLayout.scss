@@ -35,6 +35,7 @@ main {
     &__wrap {
         display: grid;
         grid-template-columns: calc($media-breakpoint-1440 * 0.2) 1fr;
+        gap: 2em;
         max-width: $media-breakpoint-1440;
     }
 }
