@@ -73,3 +73,12 @@
         }
     }
 }
+
+@media (max-width: 768px) {
+    .SideMenu {
+        &__item {
+            font-size: 14px;
+            height: 40px;
+        }
+    }
+}

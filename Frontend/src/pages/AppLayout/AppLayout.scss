@@ -7,7 +7,6 @@
 }
 .app-layout {
     width: 100%;
-    max-width: 1440px;
     min-height: 100vh;
 }
   
@@ -30,13 +29,11 @@ main {
     padding: 0;
     box-sizing: border-box;
     width: 100vw;
-    max-width: 1440px;
 
     &__wrap {
         display: grid;
-        grid-template-columns: calc($media-breakpoint-1440 * 0.2) 1fr;
+        grid-template-columns: calc(100vw * 0.2) 1fr;
         gap: 2em;
-        max-width: $media-breakpoint-1440;
     }
 }
 
@@ -51,29 +48,21 @@ main {
 }
 
 .MainContent {
-    width: 70vw;
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 2.5em 0 0;
-    max-width: calc(1440px - calc($media-breakpoint-1440 * 0.2) - 2em);
+    margin: 2em 0 0;
+    padding-right: 2em;
+    width: 100%;
 }
 
 @media (max-width: 1280px){
-    .ProfilePage__wrap {
-        grid-template-columns: calc($media-breakpoint-1440 * 0.17) 1fr !important;
-    }
-    .MainContent {
-        width: 68vw !important;
-    }
+
   }
   
   @media (max-width: 1000px) {
-    .ProfilePage__wrap {
-        grid-template-columns: calc($media-breakpoint-1440 * 0.15) 1fr !important;
-    }
     .MainContent {
-        width: 65vw !important;
         margin: 2em 0 0 !important;
     }
   }
