@@ -1,0 +1,33 @@
+@import '../../../../app/App.scss';
+.login_button {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 500px;
+  border: none;
+  color: #ffffff;
+  font-family: $fontFamily;
+  font-weight: 700;
+  font-size: inherit;
+  padding: 0.9ex;
+  padding-left: 1.3ex;
+  padding-right: 1.3ex;
+  white-space: nowrap;
+  line-height: 100%;
+}
+.login_button--blue {
+  background-color: $blue;
+}
+.login_button--green {
+  background-color: $green;
+}
+
+.login_button:hover {
+  opacity: 0.8;
+  transition: opacity 150ms ease-out 0s;
+}
+.login_button:active {
+  transform: translate(1px, 1px);
+}

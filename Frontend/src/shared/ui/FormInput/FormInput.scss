@@ -1,0 +1,77 @@
+@import '../../../app/App.scss';
+
+.label,
+.formInput__input,
+.input-error,
+textarea {
+  font-family: $fontFamily;
+  font-weight: bold;
+  font-size: 20px;
+  width: calc(100% - 30px);
+}
+
+.label {
+  display: block;
+  margin-bottom: 12px;
+}
+
+.formInput__input {
+  height: 50px;
+  border-radius: 40px;
+  padding: 2px 0px 2px 30px;
+  background: white;
+  color: black;
+  border: 2px solid $block-bg;
+
+  &::placeholder {
+    color: $block-bg;
+  }
+}
+
+.formInput__textarea {
+  width: calc(100% - 30px);
+  height: 150px;
+  border-radius: 40px;
+  padding: 15px 15px 2px 15px;
+  background: white;
+  color: black;
+  border: none;
+  resize: none;
+
+  &::placeholder {
+    color: $block-bg;
+  }
+}
+
+.input-error {
+  height: 50px;
+  border-radius: 40px;
+  padding: 2px 0px 2px 30px;
+  background: $light-red;
+  color: black;
+  border: 1.5px solid $red;
+}
+
+.error {
+  color: $red;
+  font-size: 0.75em;
+  margin-left: 0.55em;
+}
+
+@media (max-width: 768px) {
+  .label,
+  .formInput__input,
+  .formInput__textarea {
+    font-size: 15px;
+  }
+
+  .formInput__input {
+    width: calc(100% - 45px);
+    height: 40px;
+  }
+
+  .formInput__textarea {
+    height: 100px;
+    width: calc(100% - 45px);
+  }
+}

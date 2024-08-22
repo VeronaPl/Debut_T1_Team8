@@ -6,7 +6,7 @@ class UserAuthorization {
     userName = "username";
     userRole = "admin"; // admin / owner / user
     sessionExpiry = 0; // Время через которое заканчивается сессия пользователя
-    isAuth = true;
+    isAuth = false;
     money = 50;
 
     constructor() {
