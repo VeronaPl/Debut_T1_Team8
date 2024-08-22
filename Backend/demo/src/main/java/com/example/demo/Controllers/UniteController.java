@@ -2,7 +2,8 @@ package com.example.demo.Controllers;
 
 import com.example.demo.BDData.CFO;
 import com.example.demo.BDData.Person;
-import com.example.demo.Data.*;
+import com.example.demo.DataReq.*;
+import com.example.demo.Service.ALLIDService;
 import com.example.demo.Service.CFOService;
 import com.example.demo.Service.PersonService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,6 +27,9 @@ public class UniteController {
     @Autowired
     private CFOService cfoService;
 
+    @Autowired
+    private ALLIDService allidService;
+
     // Функции доступные без регистрации
 
     @Operation(summary = "Просмотр всех пользователей")
@@ -34,7 +38,7 @@ public class UniteController {
         List<Person> persons = personService.getAll();
 
         return persons != null &&  !persons.isEmpty()
-                ? new ResponseEntity<>(persons.stream().map(PersonReq::new).collect(Collectors.toList()), HttpStatus.OK)
+                ? new ResponseEntity<>(persons.stream().map(p -> new PersonReq(p, allidService)).collect(Collectors.toList()), HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
     @Operation(summary = "Просмотр юзеров")
@@ -43,7 +47,7 @@ public class UniteController {
         List<Person> persons = personService.getAll().stream().filter(p -> Objects.equals(p.getRole(), "user")).toList();
 
         return persons != null &&  !persons.isEmpty()
-                ? new ResponseEntity<>(persons.stream().map(PersonReq::new).collect(Collectors.toList()), HttpStatus.OK)
+                ? new ResponseEntity<>(persons.stream().map(p -> new PersonReq(p, allidService)).collect(Collectors.toList()), HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
     @Operation(summary = "Просмотр владельцев")
@@ -52,18 +56,19 @@ public class UniteController {
         List<Person> persons = personService.getAll().stream().filter(p -> Objects.equals(p.getRole(), "owner")).toList();
 
         return persons != null &&  !persons.isEmpty()
-                ? new ResponseEntity<>(persons.stream().map(PersonReq::new).collect(Collectors.toList()), HttpStatus.OK)
+                ? new ResponseEntity<>(persons.stream().map(p -> new PersonReq(p, allidService)).collect(Collectors.toList()), HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
     @Operation(summary = "Просмотр пользователя по ID")
     @GetMapping("/personByID")
-    public ResponseEntity<PersonReq> personByID(Long Id) {
-        Person pers = personService.getById(Id);
+    public ResponseEntity<PersonReq> personByID(Long AllId) {
+
+        Person pers = personService.getById(allidService.getTableId(AllId));
         if (pers == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        return new ResponseEntity<>(new PersonReq(pers), HttpStatus.OK);
+        return new ResponseEntity<>(new PersonReq(pers, allidService), HttpStatus.OK);
     }
     @Operation(summary = "Просмотр пользователя по Логину")
     @GetMapping("/personByLogin")
@@ -75,7 +80,7 @@ public class UniteController {
 
         Person pers = personService.getAll().stream().filter(p -> Objects.equals(p.getLogin(), login)).findFirst().get();
 
-        return new ResponseEntity<>(new PersonReq(pers), HttpStatus.OK);
+        return new ResponseEntity<>(new PersonReq(pers, allidService), HttpStatus.OK);
     }
 
     @Operation(summary = "Просмотр списка цфо")
@@ -84,17 +89,17 @@ public class UniteController {
         List<CFO> cfoes = cfoService.getAll();
 
         return cfoes != null &&  !cfoes.isEmpty()
-                ? new ResponseEntity<>(cfoes.stream().map(CFOReq::new).collect(Collectors.toList()), HttpStatus.OK)
+                ? new ResponseEntity<>(cfoes.stream().map(c -> new CFOReq(c, allidService)).collect(Collectors.toList()), HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @Operation(summary = "Просмотр цфо")
     @GetMapping("/cfoName")
-    public ResponseEntity<CFOReq> cfoName(Long id) {
-        CFO cfo = cfoService.getById(id);
+    public ResponseEntity<CFOReq> cfoName(Long AllId) {
+        CFO cfo = cfoService.getById(allidService.getTableId(AllId));
 
         return cfo != null
-                ? new ResponseEntity<>(new CFOReq(cfo), HttpStatus.OK)
+                ? new ResponseEntity<>(new CFOReq(cfo, allidService), HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 

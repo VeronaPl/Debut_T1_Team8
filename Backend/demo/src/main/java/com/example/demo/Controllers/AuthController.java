@@ -1,8 +1,10 @@
 package com.example.demo.Controllers;
 
+import com.example.demo.BDData.ALLID;
 import com.example.demo.BDData.Person;
-import com.example.demo.Data.PersonSumReq;
+import com.example.demo.DataReq.PersonSumReq;
 import com.example.demo.Config.Sha256;
+import com.example.demo.Service.ALLIDService;
 import com.example.demo.Service.AuthService;
 import com.example.demo.Service.PersonService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,6 +30,9 @@ public class AuthController {
 
     @Autowired
     private PersonService personService;
+
+    @Autowired
+    private ALLIDService allidService;
 
     @Operation(summary = "Получить токен (действителен 20 минут)")
     @PostMapping("/login")
@@ -58,7 +63,7 @@ public class AuthController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        return new ResponseEntity<>(new PersonSumReq(pers), HttpStatus.OK);
+        return new ResponseEntity<>(new PersonSumReq(pers, allidService), HttpStatus.OK);
     }
 
     @Operation(summary = "Регистрация пользователя (возврашает токен для входа)")
@@ -75,6 +80,12 @@ public class AuthController {
         pers.setLogin(login);
         pers.setPassword(hashPass);
         personService.create(pers);
+
+        pers = personService.getAll().stream().filter(p -> Objects.equals(p.getLogin(), login)).findFirst().get();
+        ALLID allid = new ALLID();
+        allid.setTableId(pers.getId());
+        allid.setTypeId("person");
+        allidService.create(allid);
 
         final String accessToken = authService.login(login, hashPass);
         return new ResponseEntity<>(accessToken, HttpStatus.OK);

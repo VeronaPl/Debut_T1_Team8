@@ -1,9 +1,12 @@
 package com.example.demo.Controllers;
 
+import com.example.demo.BDData.ALLID;
 import com.example.demo.BDData.CFO;
 import com.example.demo.BDData.Person;
 import com.example.demo.BDData.Transaction;
-import com.example.demo.Data.*;
+import com.example.demo.DataReq.*;
+import com.example.demo.RoutingDataReq.AdminObjectReq;
+import com.example.demo.Service.ALLIDService;
 import com.example.demo.Service.CFOService;
 import com.example.demo.Service.PersonService;
 import com.example.demo.Service.TransactionService;
@@ -36,6 +39,9 @@ public class AdminController {
 
     @Autowired
     private TransactionService transactionService;
+
+    @Autowired
+    private ALLIDService allidService;
 
     // Администратор
 
@@ -75,7 +81,7 @@ public class AdminController {
         List<CFO> cfoes = cfoService.getAll();
 
         return cfoes != null &&  !cfoes.isEmpty()
-                ? new ResponseEntity<>(cfoes.stream().map(t -> new CFOSumReq(t, personService)).collect(Collectors.toList()), HttpStatus.OK)
+                ? new ResponseEntity<>(cfoes.stream().map(t -> new CFOSumReq(t, personService, allidService)).collect(Collectors.toList()), HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
@@ -89,31 +95,31 @@ public class AdminController {
         List<CFO> cfoes = cfoService.getAll().stream().filter(c -> c.getFinalDate().before(new Date())).toList();
 
         return cfoes != null &&  !cfoes.isEmpty()
-                ? new ResponseEntity<>(cfoes.stream().map(t -> new CFOSumReq(t, personService)).collect(Collectors.toList()), HttpStatus.OK)
+                ? new ResponseEntity<>(cfoes.stream().map(t -> new CFOSumReq(t, personService, allidService)).collect(Collectors.toList()), HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @Operation(summary = "Просмотр ЦФО по ID", security = {@SecurityRequirement(name = "bearer-key")})
     @GetMapping("/cfoByID")
-    public ResponseEntity<CFOSumReq> cfoById(Long Id) {
+    public ResponseEntity<CFOSumReq> cfoById(Long AllId) {
         if (isNotAdmin()){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        CFO cfo = cfoService.getById(Id);
+        CFO cfo = cfoService.getById(allidService.getTableId(AllId));
         if (cfo == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(new CFOSumReq(cfo, personService), HttpStatus.OK);
+        return new ResponseEntity<>(new CFOSumReq(cfo, personService, allidService), HttpStatus.OK);
     }
 
     @Operation(summary = "Создание цфо и назначение кого-то пользователя его владельцем по ID", security = {@SecurityRequirement(name = "bearer-key")})
     @PostMapping("/makeCFObyId")
-    public ResponseEntity<CFOSumReq> makeCFObyId(String cfoName, Integer sum, Long ownerId, String finalDate) {
+    public ResponseEntity<CFOSumReq> makeCFObyId(String cfoName, Integer sum, Long AllownerId, String finalDate) {
         if (isNotAdmin()){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-
+        Long ownerId = allidService.getTableId(AllownerId);
         boolean cfoIs = cfoService.getAll().stream().anyMatch(p -> Objects.equals(p.getCfoName(), cfoName));
         if (cfoIs){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -141,7 +147,13 @@ public class AdminController {
 
         cfoService.create(cfo);
 
-        return new ResponseEntity<>(new CFOSumReq(cfo, personService), HttpStatus.OK);
+        cfo = cfoService.getAll().stream().filter(p -> Objects.equals(p.getCfoName(), cfoName)).findFirst().get();
+        ALLID allid = new ALLID();
+        allid.setTableId(cfo.getId());
+        allid.setTypeId("cfo");
+        allidService.create(allid);
+
+        return new ResponseEntity<>(new CFOSumReq(cfo, personService, allidService), HttpStatus.OK);
     }
 
     @Operation(summary = "Создание цфо и назначение кого-то пользователя его владельцем по Логину", security = {@SecurityRequirement(name = "bearer-key")})
@@ -177,16 +189,22 @@ public class AdminController {
 
         cfoService.create(cfo);
 
-        return new ResponseEntity<>(new CFOSumReq(cfo, personService), HttpStatus.OK);
+        cfo = cfoService.getAll().stream().filter(p -> Objects.equals(p.getCfoName(), cfoName)).findFirst().get();
+        ALLID allid = new ALLID();
+        allid.setTableId(cfo.getId());
+        allid.setTypeId("cfo");
+        allidService.create(allid);
+
+        return new ResponseEntity<>(new CFOSumReq(cfo, personService, allidService), HttpStatus.OK);
     }
 
     @Operation(summary = "Изменение буджета ЦФО", security = {@SecurityRequirement(name = "bearer-key")})
     @PutMapping("/adminToCFO")
-    public ResponseEntity<CFOSumReq> adminToCFO(Long cfoId, Integer newSum, String comment) {
+    public ResponseEntity<CFOSumReq> adminToCFO(Long AllcfoId, Integer newSum, String comment) {
         if (isNotAdmin()){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-
+        Long cfoId = allidService.getTableId(AllcfoId);
         CFO cfo = cfoService.getById(cfoId);
 
         if (cfo == null){
@@ -210,17 +228,17 @@ public class AdminController {
         tran.setType("adminToCFO");
         tran.setSum(r);
         transactionService.create(tran);
-        return new ResponseEntity<>(new CFOSumReq(cfo, personService), HttpStatus.OK);
+        return new ResponseEntity<>(new CFOSumReq(cfo, personService, allidService), HttpStatus.OK);
     }
 
     @Operation(summary = "Изменение времени конца периода буджета", security = {@SecurityRequirement(name = "bearer-key")})
     @PutMapping("/newFinalDateCFO")
-    public ResponseEntity<CFOSumReq> newFinalDateCFO(Long cfoId, String newFinalDate) {
+    public ResponseEntity<CFOSumReq> newFinalDateCFO(Long AllcfoId, String newFinalDate) {
         if (isNotAdmin()){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        CFO cfo = cfoService.getById(cfoId);
+        CFO cfo = cfoService.getById(allidService.getTableId(AllcfoId));
 
         if (cfo == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -232,16 +250,16 @@ public class AdminController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         cfoService.update(cfo.getId(), cfo);
-        return new ResponseEntity<>(new CFOSumReq(cfo, personService), HttpStatus.OK);
+        return new ResponseEntity<>(new CFOSumReq(cfo, personService, allidService), HttpStatus.OK);
     }
 
     @Operation(summary = "Пополнение буджета пользователя по Id", security = {@SecurityRequirement(name = "bearer-key")})
     @PostMapping("/adminToPersonByID")
-    public ResponseEntity<TransactionReq> adminToPersonByID(Long persId, Integer s, String comment) {
+    public ResponseEntity<TransactionReq> adminToPersonByID(Long AllpersId, Integer s, String comment) {
         if (isNotAdmin()){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-
+        Long persId = allidService.getTableId(AllpersId);
         Person pers = personService.getById(persId);
 
         if (pers == null ){
@@ -298,11 +316,11 @@ public class AdminController {
 
     @Operation(summary = "Удаление пользователя (владельца) по Id", security = {@SecurityRequirement(name = "bearer-key")})
     @DeleteMapping("/deletePersonByID")
-    public ResponseEntity<String> deletePersonByID(Long Id) {
+    public ResponseEntity<String> deletePersonByID(Long AllId) {
         if (isNotAdmin()){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-
+        Long Id = allidService.getTableId(AllId);
         if (Id == 1L){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -335,11 +353,11 @@ public class AdminController {
 
     @Operation(summary = "Удаление ЦФО", security = {@SecurityRequirement(name = "bearer-key")})
     @DeleteMapping("/deleteCFO")
-    public ResponseEntity<String> deleteCFO(Long Id) {
+    public ResponseEntity<String> deleteCFO(Long AllId) {
         if (isNotAdmin()){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-
+        Long Id = allidService.getTableId(AllId);
         CFO cfo = cfoService.getById(Id);
         if (cfo == null ){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -352,11 +370,11 @@ public class AdminController {
 
     @Operation(summary = "Поменять роль пользователя по Id", security = {@SecurityRequirement(name = "bearer-key")})
     @PutMapping("/switchRolePersonByID")
-    public ResponseEntity<PersonReq> switchRolePersonByID(Long Id) {
+    public ResponseEntity<PersonReq> switchRolePersonByID(Long AllId) {
         if (isNotAdmin()){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-
+        Long Id = allidService.getTableId(AllId);
         Person pers = personService.getById(Id);
         if (Id == 1L){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -373,7 +391,7 @@ public class AdminController {
 
         personService.update(Id, pers);
 
-        return new ResponseEntity<>(new PersonReq(pers), HttpStatus.OK);
+        return new ResponseEntity<>(new PersonReq(pers, allidService), HttpStatus.OK);
     }
 
     @Operation(summary = "Поменять роль пользователя по логину", security = {@SecurityRequirement(name = "bearer-key")})
@@ -402,16 +420,17 @@ public class AdminController {
 
         personService.update(pers.getId(), pers);
 
-        return new ResponseEntity<>(new PersonReq(pers), HttpStatus.OK);
+        return new ResponseEntity<>(new PersonReq(pers, allidService), HttpStatus.OK);
     }
 
     @Operation(summary = "Поменять владельца в ЦФО по Id пользователя", security = {@SecurityRequirement(name = "bearer-key")})
     @PutMapping("/switchOwnerCFOByID")
-    public ResponseEntity<CFOSumReq> switchOwnerCFOByID(Long CFOId, Long Id) {
+    public ResponseEntity<CFOSumReq> switchOwnerCFOByID(Long AllCFOId, Long AllId) {
         if (isNotAdmin()){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-
+        Long CFOId = allidService.getTableId(AllCFOId);
+        Long Id = allidService.getTableId(AllId);
         Person pers = personService.getById(Id);
         CFO cfo = cfoService.getById(CFOId);
         if (pers == null || cfo == null ){
@@ -423,16 +442,16 @@ public class AdminController {
         cfo.setOwnerId(Id);
         cfoService.update(CFOId, cfo);
 
-        return new ResponseEntity<>(new CFOSumReq(cfo, personService), HttpStatus.OK);
+        return new ResponseEntity<>(new CFOSumReq(cfo, personService, allidService), HttpStatus.OK);
     }
 
     @Operation(summary = "Поменять владельца в ЦФО по Логину пользователя", security = {@SecurityRequirement(name = "bearer-key")})
     @PutMapping("/switchOwnerCFOByLog")
-    public ResponseEntity<CFOSumReq> switchOwnerCFOByLog(Long CFOId, String login) {
+    public ResponseEntity<CFOSumReq> switchOwnerCFOByLog(Long AllCFOId, String login) {
         if (isNotAdmin()){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-
+        Long CFOId = allidService.getTableId(AllCFOId);
         boolean persIs = personService.getAll().stream().anyMatch(p -> Objects.equals(p.getLogin(), login));
         if (!persIs){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -450,15 +469,16 @@ public class AdminController {
         cfo.setOwnerId(pers.getId());
         cfoService.update(CFOId, cfo);
 
-        return new ResponseEntity<>(new CFOSumReq(cfo, personService), HttpStatus.OK);
+        return new ResponseEntity<>(new CFOSumReq(cfo, personService, allidService), HttpStatus.OK);
     }
 
     @Operation(summary = "Смена названия ЦФО", security = {@SecurityRequirement(name = "bearer-key")})
     @PutMapping("/nameCfo")
-    public ResponseEntity<CFOSumReq> nameCfo(Long Id, String newName) {
+    public ResponseEntity<CFOSumReq> nameCfo(Long AllId, String newName) {
         if (isNotAdmin()){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+        Long Id = allidService.getTableId(AllId);
         boolean cfoIs = cfoService.getAll().stream().anyMatch(p -> Objects.equals(p.getCfoName(), newName));
         if (cfoIs){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -471,24 +491,24 @@ public class AdminController {
 
         cfo.setCfoName(newName);
         cfoService.update(Id, cfo);
-        return new ResponseEntity<>(new CFOSumReq(cfo, personService), HttpStatus.OK);
+        return new ResponseEntity<>(new CFOSumReq(cfo, personService, allidService), HttpStatus.OK);
     }
 
     @Operation(summary = "Просмотр истории операций связанных с цфо (type = 'cfoes' or 'users' or 'admin' or '')) формат даты 'yyyy-MM-dd HH:mm:ss'",
             security = {@SecurityRequirement(name = "bearer-key")})
     @GetMapping("/cfoesTransactions")
-    public ResponseEntity<List<TransactionReq>> cfoesTransactions(@RequestParam(required = false) Long cfoId, @RequestParam(required = false) Long personId,
+    public ResponseEntity<List<TransactionReq>> cfoesTransactions(@RequestParam(required = false) Long AllcfoId, @RequestParam(required = false) Long AllpersonId,
                                                                   @RequestParam(required = false) String personLog, @RequestParam(required = false) String type,
                                                                   @RequestParam(required = false) String start, @RequestParam(required = false) String end) {
         if (isNotAdmin()){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-
         List<Transaction> transactions = transactionService.getAll();
 
-        if (cfoId == null){
+        if (AllcfoId == null){
             transactions = transactions.stream().filter(t -> !Objects.equals(t.getOwner(), 0L)).toList();
         }else{
+            Long cfoId = allidService.getTableId(AllcfoId);
             CFO cfo = cfoService.getById(cfoId);
             if (cfo == null ){
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -499,7 +519,9 @@ public class AdminController {
             ).toList();
         }
 
-        if (personId != null){
+        if (AllpersonId != null){
+            Long personId = allidService.getTableId(AllpersonId);
+
             Person p = personService.getById(personId);
             if (p == null){
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -562,6 +584,45 @@ public class AdminController {
         }
 
         return new ResponseEntity<>(new AllSumReq(cfoService.getAll(), personService.getAll()), HttpStatus.OK);
+    }
+
+    @Operation(summary = "Просмотр объекта для админа, отображает все страницы юзеров и все цфо по ID", security = {@SecurityRequirement(name = "bearer-key")})
+    @GetMapping("/adminObjectByID")
+    public ResponseEntity<AdminObjectReq> uniteObjectByID(Long AllId) {
+        if (isNotAdmin()){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        ALLID obj = allidService.getById(AllId);
+        if (obj == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        CFO cfo = null;
+        Person person = null;
+        if (Objects.equals(obj.getTypeId(), "cfo"))
+            cfo = cfoService.getById(allidService.getTableId(AllId));
+        if (Objects.equals(obj.getTypeId(), "person"))
+            person = personService.getById(allidService.getTableId(AllId));
+        if (cfo == null && person == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(new AdminObjectReq(obj, cfo, person, allidService, personService), HttpStatus.OK);
+    }
+
+    @Operation(summary = "Просмотр объекта для админа, отображает все страницы юзеров по логину", security = {@SecurityRequirement(name = "bearer-key")})
+    @GetMapping("/adminObjectByLog")
+    public ResponseEntity<AdminObjectReq> uniteObjectByLog(String Log) {
+        if (isNotAdmin()){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        boolean persIs = personService.getAll().stream().anyMatch(p -> Objects.equals(p.getLogin(), Log));
+        if (!persIs){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        Person pers = personService.getAll().stream().filter(p -> Objects.equals(p.getLogin(), Log)).findFirst().get();
+
+        return new ResponseEntity<>(new AdminObjectReq(null, null, pers, allidService, personService), HttpStatus.OK);
     }
 
     private boolean isNotAdmin(){

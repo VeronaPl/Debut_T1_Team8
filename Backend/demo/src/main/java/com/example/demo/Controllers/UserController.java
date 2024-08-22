@@ -3,11 +3,9 @@ package com.example.demo.Controllers;
 import com.example.demo.BDData.Person;
 import com.example.demo.BDData.Transaction;
 import com.example.demo.Config.Sha256;
-import com.example.demo.Data.TransactionReq;
-import com.example.demo.Service.AuthService;
-import com.example.demo.Service.CFOService;
-import com.example.demo.Service.PersonService;
-import com.example.demo.Service.TransactionService;
+import com.example.demo.DataReq.TransactionReq;
+import com.example.demo.RoutingDataReq.UserObjectReq;
+import com.example.demo.Service.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -38,6 +36,9 @@ public class UserController {
 
     @Autowired
     private AuthService authService;
+
+    @Autowired
+    private ALLIDService allidService;
 
     // Функции доступные пользователю и владельцу
     @Operation(summary = "Удаление пользователя (себя)", security = {@SecurityRequirement(name = "bearer-key")})
@@ -91,13 +92,13 @@ public class UserController {
 
     @Operation(summary = "Перевод пользователю по ID", security = {@SecurityRequirement(name = "bearer-key")})
     @PostMapping("/personToPersonById")
-    public ResponseEntity<TransactionReq> personToPersonById(Long id, Integer s, String comment) {
+    public ResponseEntity<TransactionReq> personToPersonById(Long AllId, Integer s, String comment) {
         Person pers = loginOfUserOrOwner();
         if (pers == null || pers.getSum() < s || s <= 0){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        Person persAnother = personService.getById(id);
+        Person persAnother = personService.getById(allidService.getTableId(AllId));
         if (persAnother == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -150,19 +151,15 @@ public class UserController {
     }
 
 
-    @Operation(summary = "Поменять ФИО, никнейм", security = {@SecurityRequirement(name = "bearer-key")})
+    @Operation(summary = "Поменять ФИО", security = {@SecurityRequirement(name = "bearer-key")})
     @PutMapping("/newName")
-    public ResponseEntity<String> newFioNik(String firstName, String averageName, String lastName, String login) {
+    public ResponseEntity<String> newFioNik(String firstName, String averageName, String lastName) {
         Person pers = loginOfUserOrOwner();
-        if (pers == null || firstName == null || averageName == null || lastName == null || login == null ||
-                firstName.isEmpty() || averageName.isEmpty()  || lastName.isEmpty()  || login.isEmpty() ){
+        if (pers == null || firstName == null || averageName == null || lastName == null ||
+                firstName.isEmpty() || averageName.isEmpty()  || lastName.isEmpty()){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        boolean persIs = personService.getAll().stream().anyMatch(p -> Objects.equals(p.getLogin(), login));
-        if (persIs && !Objects.equals(pers.getLogin(), login)){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        pers.setLogin(login);
+
         pers.setFirstName(firstName);
         pers.setAverageName(averageName);
         pers.setLastName(lastName);
@@ -274,6 +271,36 @@ public class UserController {
         return transactions != null &&  !transactions.isEmpty()
                 ? new ResponseEntity<>(transactions.stream().map(t -> new TransactionReq(t, cfoService, personService)).collect(Collectors.toList()), HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @Operation(summary = "Просмотр объекта для юзера, отображает только свою страницу, всё остальное 404 по ID", security = {@SecurityRequirement(name = "bearer-key")})
+    @GetMapping("/userObjectByID")
+    public ResponseEntity<UserObjectReq> userObjectByID(Long AllId) {
+        Person pers = loginOfUserOrOwner();
+        if (pers == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        if (!Objects.equals(AllId, allidService.getALLId(pers.getId(), "person"))) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(new UserObjectReq(pers, allidService), HttpStatus.OK);
+    }
+
+    @Operation(summary = "Просмотр объекта для юзера, отображает только свою страницу, всё остальное 404 по Логину", security = {@SecurityRequirement(name = "bearer-key")})
+    @GetMapping("/userObjectByLog")
+    public ResponseEntity<UserObjectReq> userObjectByLog(String Log) {
+        Person pers = loginOfUserOrOwner();
+        if (pers == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        if (!Objects.equals(pers.getLogin(), Log)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(new UserObjectReq(pers, allidService), HttpStatus.OK);
     }
 
     private Person loginOfUserOrOwner(){

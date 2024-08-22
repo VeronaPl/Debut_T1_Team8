@@ -32,3 +32,10 @@ CREATE TABLE IF NOT EXISTS transactions
     datatime TIMESTAMP NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS all_id
+(
+    id    BIGSERIAL PRIMARY KEY ,
+    type_id  VARCHAR(100) NOT NULL ,
+    table_id    BIGSERIAL
+);
+
