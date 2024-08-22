@@ -4,6 +4,20 @@
     &__title {
         font-size: 1.7rem;
         font-weight: 600;
+        text-align: center;
+    }
+
+    &__button {
+        margin-top: 20px;
+        color: black;
+
+    }
+
+    button {
+        margin: 8px auto;
+        border-radius: 25px;
+        font-size: 20px;
+        color: black;
     }
 }
 
@@ -27,6 +41,9 @@
     .MainContent {
         &__title {
             font-size: 1.2rem;
+        }
+        button {
+            font-size: 17px;
         }
     }
 }
