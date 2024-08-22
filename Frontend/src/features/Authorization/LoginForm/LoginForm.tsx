@@ -4,9 +4,10 @@ import { Form } from 'react-final-form';
 import { useNavigate } from "react-router";
 import { FormInput } from "../../../shared/ui/FormInput";
 import { LoginButton } from "../../../shared/ui/buttons/Login";
+import { userStore } from "../../../app/store/userStore";
 
 
-interface FormValues {
+export interface FormValues {
     username: string;
     password: string;
 }
@@ -30,6 +31,7 @@ const validate = (values: FormValues) => {
 export const LoginForm = ():JSX.Element => {
     const onSubmit = async (values: FormValues) => {
         console.log('Form values:', values);
+        userStore.setUserAuth(true);
     };
 
     const router = useNavigate();
