@@ -14,7 +14,7 @@ export const Header = observer( () => {
     <div className='nav__container'>
       <nav className='nav__main'>
         <div className="logo__container" onClick={() => {router('/')}}>
-          <img src={Logo} alt="logo" />
+          <img src={Logo} className='logo' alt="logo" />
         </div>
         <div>
             <h1 className='header__title'>Внутренняя валюта</h1>

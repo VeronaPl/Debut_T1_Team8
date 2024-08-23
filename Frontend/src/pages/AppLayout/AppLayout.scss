@@ -13,12 +13,67 @@
   
 header {
     flex-shrink: 0;
+    z-index: 200;
+    position: sticky;
+    top: 0;
 }
 
 main {
     flex-grow: 1;
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    margin: 1em auto;
 }
+
+.ProfilePage {
+    font-family: 'ALS-hauss', sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    width: 100vw;
+    max-width: 1440px;
+
+    &__wrap {
+        display: grid;
+        grid-template-columns: calc($media-breakpoint-1440 * 0.2) 1fr;
+        gap: 2em;
+        max-width: $media-breakpoint-1440;
+    }
+}
+
+.SideMenu__container {
+    display: flex;
+    justify-content: flex-start;
+    z-index: 199;
+    position: sticky;
+    top: 75px;    
+    left: 0;
+    height: calc(100vh - 75px);
+}
+
+.MainContent {
+    width: 70vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 2.5em 0 0;
+    max-width: calc(1440px - calc($media-breakpoint-1440 * 0.2) - 2em);
+}
+
+@media (max-width: 1280px){
+    .ProfilePage__wrap {
+        grid-template-columns: calc($media-breakpoint-1440 * 0.17) 1fr !important;
+    }
+    .MainContent {
+        width: 68vw !important;
+    }
+  }
+  
+  @media (max-width: 1000px) {
+    .ProfilePage__wrap {
+        grid-template-columns: calc($media-breakpoint-1440 * 0.15) 1fr !important;
+    }
+    .MainContent {
+        width: 65vw !important;
+        margin: 2em 0 0 !important;
+    }
+  }
