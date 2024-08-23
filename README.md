@@ -11,7 +11,7 @@ npm run dev
 ```
 Страница сваггера:  http://localhost:8080/swagger-ui/index.html#/
 
-Для создания таблиц бд надо запустить код в ```demo\src\main\resources\database``` или создать бд из таблиц в папке "пример таблиц для БД" (в этой же папке хранится файл с паролями)
+Для создание таблиц бд надо в папке demo\src\main\resources\database запустить initDB.sql и загрузить данные из таблиц persons.csv, transactions.csv, cfoes.csv, all_id.csv
 
 
 
