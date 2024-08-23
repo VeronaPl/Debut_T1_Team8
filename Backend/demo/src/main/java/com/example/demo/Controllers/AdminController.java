@@ -198,7 +198,7 @@ public class AdminController {
         return new ResponseEntity<>(new CFOSumReq(cfo, personService, allidService), HttpStatus.OK);
     }
 
-    @Operation(summary = "Изменение буджета ЦФО", security = {@SecurityRequirement(name = "bearer-key")})
+    @Operation(summary = "Изменение бюджета ЦФО", security = {@SecurityRequirement(name = "bearer-key")})
     @PutMapping("/adminToCFO")
     public ResponseEntity<CFOSumReq> adminToCFO(Long AllcfoId, Integer newSum, String comment) {
         if (isNotAdmin()){
@@ -231,7 +231,7 @@ public class AdminController {
         return new ResponseEntity<>(new CFOSumReq(cfo, personService, allidService), HttpStatus.OK);
     }
 
-    @Operation(summary = "Изменение времени конца периода буджета", security = {@SecurityRequirement(name = "bearer-key")})
+    @Operation(summary = "Изменение времени конца периода бюджета", security = {@SecurityRequirement(name = "bearer-key")})
     @PutMapping("/newFinalDateCFO")
     public ResponseEntity<CFOSumReq> newFinalDateCFO(Long AllcfoId, String newFinalDate) {
         if (isNotAdmin()){
@@ -253,7 +253,7 @@ public class AdminController {
         return new ResponseEntity<>(new CFOSumReq(cfo, personService, allidService), HttpStatus.OK);
     }
 
-    @Operation(summary = "Пополнение буджета пользователя по Id", security = {@SecurityRequirement(name = "bearer-key")})
+    @Operation(summary = "Пополнение бюджета пользователя по Id", security = {@SecurityRequirement(name = "bearer-key")})
     @PostMapping("/adminToPersonByID")
     public ResponseEntity<TransactionReq> adminToPersonByID(Long AllpersId, Integer s, String comment) {
         if (isNotAdmin()){
@@ -283,7 +283,7 @@ public class AdminController {
         return new ResponseEntity<>(new TransactionReq(tran, cfoService, personService), HttpStatus.OK);
     }
 
-    @Operation(summary = "Пополнение буджета пользователя по логину", security = {@SecurityRequirement(name = "bearer-key")})
+    @Operation(summary = "Пополнение бюджета пользователя по логину", security = {@SecurityRequirement(name = "bearer-key")})
     @PostMapping("/adminToPersonByLog")
     public ResponseEntity<TransactionReq> adminToPersonByLog(String login, Integer s, String comment) {
         if (isNotAdmin()){
