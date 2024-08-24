@@ -33,7 +33,7 @@ main {
     &__wrap {
         display: grid;
         grid-template-columns: calc(100vw * 0.2) 1fr;
-        gap: 2em;
+        gap: 40px;
     }
 }
 
@@ -52,7 +52,7 @@ main {
     display: flex;
     flex-direction: column;
     margin: 2em 0 0;
-    padding-right: 2em;
+    padding-right: 40px;
     width: 100%;
 }
 
