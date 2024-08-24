@@ -29,6 +29,8 @@ export const TransactionsPage = (): JSX.Element => {
             ('id_recipient' in transaction && transaction.id_recipient.toString().toLowerCase().includes(search))
         )
       );
+    } else {
+      setSearchResults([...userStore.transactions]);
     }
   };
 
