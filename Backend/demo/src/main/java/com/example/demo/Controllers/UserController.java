@@ -125,7 +125,7 @@ public class UserController {
 
     @Operation(summary = "Перевод коинов в магазин", security = {@SecurityRequirement(name = "bearer-key")})
     @PostMapping("/personToShop")
-    public ResponseEntity<TransactionReq> personToShop(Integer s, String comment) {
+    public ResponseEntity<TransactionReq> personToShop(Integer s,@RequestParam(required = false) String comment) {
         Person pers = loginOfUserOrOwner();
         if (pers == null || s <= 0){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -169,6 +169,7 @@ public class UserController {
         return new ResponseEntity<>("update", HttpStatus.OK);
     }
 
+    /*
     @Operation(summary = "Поменять пароль", security = {@SecurityRequirement(name = "bearer-key")})
     @PutMapping("/newPass")
     public ResponseEntity<String> newPass(String old_password, String password) {
@@ -187,6 +188,8 @@ public class UserController {
 
         return new ResponseEntity<>("new pass", HttpStatus.OK);
     }
+
+     */
 
 
     @Operation(summary = "Просмотр транзакций пользователя", security = {@SecurityRequirement(name = "bearer-key")})
