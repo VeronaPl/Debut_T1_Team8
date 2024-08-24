@@ -253,6 +253,7 @@ public class AdminController {
         return new ResponseEntity<>(new CFOSumReq(cfo, personService, allidService), HttpStatus.OK);
     }
 
+    /*
     @Operation(summary = "Пополнение бюджета пользователя по Id", security = {@SecurityRequirement(name = "bearer-key")})
     @PostMapping("/adminToPersonByID")
     public ResponseEntity<TransactionReq> adminToPersonByID(Long AllpersId, Integer s, String comment) {
@@ -312,7 +313,7 @@ public class AdminController {
         tran.setSum(s);
         transactionService.create(tran);
         return new ResponseEntity<>(new TransactionReq(tran, cfoService, personService), HttpStatus.OK);
-    }
+    }   */
 
     @Operation(summary = "Удаление пользователя (владельца) по Id", security = {@SecurityRequirement(name = "bearer-key")})
     @DeleteMapping("/deletePersonByID")
