@@ -14,7 +14,7 @@ class UserAuthorization {
     token = "";
     userId = "";
     userName = "username";
-    userRole = "user"; // admin / owner / user
+    userRole = "admin"; // admin / owner / user
     sessionExpiry = 0; // Время через которое заканчивается сессия пользователя
     isAuth = true;
     money = 50;

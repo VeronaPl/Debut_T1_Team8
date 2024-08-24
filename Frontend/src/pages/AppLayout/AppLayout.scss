@@ -54,6 +54,7 @@ main {
     margin: 2em 0 0;
     padding-right: 40px;
     width: 100%;
+    color: black;
 }
 
 @media (max-width: 1280px){
@@ -65,3 +66,16 @@ main {
         margin: 2em 0 0 !important;
     }
   }
+
+@media (max-width: 768px) {
+    .ProfilePage__wrap {
+        gap: 20px;
+    }
+    .MainContent {
+        padding-right: 20px;
+    }
+    .SideMenu__container {
+        height: calc(100vh - 60px);
+        top: 60px;
+    }
+}

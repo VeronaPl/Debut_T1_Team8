@@ -25,7 +25,7 @@ export const AppLayout = observer( ():JSX.Element => {
 
     useEffect(() => {
         getData(() => setLoading(false))
-    }, []);
+    }, [loading]);
 
     return (
         <div className='layout-wrap'>

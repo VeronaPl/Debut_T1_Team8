@@ -53,12 +53,11 @@
                 box-shadow: none;
 
                 &:hover {
-                    opacity: 0.8;
-                    transition: opacity 150ms ease-out 0s;
+                    
                 }
                 &:active {
-                    transform: translate(1px, 1px);
-                    transition: 0.1s;
+                    opacity: 0.8;
+                    transition: opacity 150ms ease-out 0s;
                 }
             }
         }
@@ -71,6 +70,11 @@
 
         .clickable {
             cursor: pointer;
+
+            &:hover {
+                text-decoration: underline;
+                color: $blue;
+            }
         }
     }
 }
@@ -88,6 +92,11 @@
         &__title {
             font-size: 1.4rem;
         }
+
+        .table>:not(caption)>*>* {
+            padding: 0.7rem 1rem;
+            font-size: 14px;
+        }
     }
 }
 
@@ -97,7 +106,30 @@
             font-size: 1.2rem;
         }
         button {
-            font-size: 17px;
+            font-size: 14px;
+        }
+
+        .dataAnaliz {
+            &__form {
+                height: 30px;
+                &__input {
+                    font-size: 14px;
+                }
+
+                &__button {
+                    font-size: 14px;
+                }
+
+                &__table {
+                    max-width: 50%;
+                    overflow-x: scroll;
+                }
+            }
+        }
+
+        .table>:not(caption)>*>* {
+            padding: 0.5rem 0.8rem;
+            font-size: 12px;
         }
     }
 }

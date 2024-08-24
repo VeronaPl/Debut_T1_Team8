@@ -4,6 +4,7 @@ import { LoginButton } from '../../shared';
 import { userStore } from '../../app/store/userStore';
 import { UserTransactionsProps } from '../../app/store/userStore';
 import { MDBTable, MDBTableHead, MDBTableBody, MDBBtn } from 'mdb-react-ui-kit';
+import { useNavigate } from 'react-router';
 
 export const TransactionsPage = (): JSX.Element => {
   const [modalCreate, setModalCreate] = useState<boolean>(false);
@@ -11,6 +12,8 @@ export const TransactionsPage = (): JSX.Element => {
 
   const [searchValue, setSearchValue] = useState<string>('');
   const [searchResults, setSearchResults] = useState<UserTransactionsProps[]>([...userStore.transactions]);
+
+  const route = useNavigate();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,38 +64,41 @@ export const TransactionsPage = (): JSX.Element => {
             Найти
           </button>
         </form>
-        <MDBTable className='MDBTable' align='middle' hover responsive>
-          <MDBTableHead light>
-            <tr>
-              <th scope='col'>№</th>
-              <th scope='col'>Отправитель</th>
-              <th scope='col'>Получатель</th>
-              <th scope='col'>Сумма</th>
-              <th scope='col'>Дата</th>
-            </tr>
-          </MDBTableHead>
-          {searchResults.length === 0 ? (
-            <MDBTableBody className='align-center mb-0'>
-              <tr>
-                <td className='text-center mb-0' colSpan={5}>
-                  Нет данных
-                </td>
+        <div className='dataAnaliz__table'>
+          <MDBTable className='MDBTable' align='middle' hover responsive>
+            <MDBTableHead light >
+              <tr className='dataAnaliz__table__head' style={{"fontSize": "18px" , "fontWeight": "600"}}>
+                <th scope='col'>№</th>
+                <th scope='col'>Отправитель</th>
+                <th scope='col'>Получатель</th>
+                <th scope='col'>Сумма</th>
+                <th scope='col'>Дата</th>
               </tr>
-            </MDBTableBody>
-          ) : (
-            searchResults.map((transaction: UserTransactionsProps, index: number) => (
-              <MDBTableBody key={index}>
+            </MDBTableHead>
+            {searchResults.length === 0 ? (
+              <MDBTableBody className='align-center mb-0'>
                 <tr>
-                  <th scope='row'>{index + 1}</th>
-                  <td className='clickable'>{transaction.username_sender}</td>
-                  <td className='clickable'>{transaction.username_recipient}</td>
-                  <td>{transaction.sum}</td>
-                  <td>{transaction.date_time}</td>
+                  <td className='text-center mb-0' colSpan={5}>
+                    Нет данных
+                  </td>
                 </tr>
               </MDBTableBody>
-            ))
-          )}
-        </MDBTable>
+            ) : (
+              searchResults.map((transaction: UserTransactionsProps, index: number) => (
+                <MDBTableBody key={index}>
+                  <tr>
+                    <th scope='row'>{index + 1}</th>
+                    <td className='clickable' onClick={() => {route(`/${transaction.username_sender}`)}}>{transaction.username_sender}</td>
+                    <td className='clickable' onClick={() => {route(`/${transaction.username_sender}`)}}>{transaction.username_recipient}</td>
+                    <td>{transaction.sum}</td>
+                    <td>{transaction.date_time}</td>
+                  </tr>
+                </MDBTableBody>
+              ))
+            )}
+          </MDBTable>
+        </div>
+        
       </div>
     </div>
   );
