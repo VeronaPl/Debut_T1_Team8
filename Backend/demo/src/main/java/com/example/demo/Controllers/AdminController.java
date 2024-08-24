@@ -55,7 +55,7 @@ public class AdminController {
         List<Transaction> transactions = transactionService.getAll();
 
         return transactions != null &&  !transactions.isEmpty()
-                ? new ResponseEntity<>(transactions.stream().map(t -> new TransactionReq(t, cfoService, personService)).collect(Collectors.toList()), HttpStatus.OK)
+                ? new ResponseEntity<>(transactions.stream().map(t -> new TransactionReq(t, cfoService, personService, allidService)).collect(Collectors.toList()), HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
     @Operation(summary = "Просмотр истории операций - без участия админа", security = {@SecurityRequirement(name = "bearer-key")})
@@ -68,7 +68,7 @@ public class AdminController {
         List<Transaction> transactions = transactionService.getAll().stream().filter(t -> t.getTFrom() != 1L).toList();
 
         return  !transactions.isEmpty()
-                ? new ResponseEntity<>(transactions.stream().map(t -> new TransactionReq(t, cfoService, personService)).collect(Collectors.toList()), HttpStatus.OK)
+                ? new ResponseEntity<>(transactions.stream().map(t -> new TransactionReq(t, cfoService, personService, allidService)).collect(Collectors.toList()), HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
     @Operation(summary = "Просмотр списка цфо", security = {@SecurityRequirement(name = "bearer-key")})
@@ -573,7 +573,7 @@ public class AdminController {
         }
 
         return transactions != null &&  !transactions.isEmpty()
-                ? new ResponseEntity<>(transactions.stream().map(t -> new TransactionReq(t, cfoService, personService)).collect(Collectors.toList()), HttpStatus.OK)
+                ? new ResponseEntity<>(transactions.stream().map(t -> new TransactionReq(t, cfoService, personService, allidService)).collect(Collectors.toList()), HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
