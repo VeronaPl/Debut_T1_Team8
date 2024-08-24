@@ -1,81 +1,80 @@
 @import '../../app/App.scss';
 
 .layout-wrap {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 .app-layout {
-    width: 100%;
-    min-height: 100vh;
+  width: 100%;
+  min-height: 100vh;
 }
-  
+
 header {
-    flex-shrink: 0;
-    z-index: 200;
-    position: sticky;
-    top: 0;
+  flex-shrink: 0;
+  z-index: 200;
+  position: sticky;
+  top: 0;
 }
 
 main {
-    flex-grow: 1;
+  flex-grow: 1;
 }
 
 .ProfilePage {
-    font-family: 'ALS-hauss', sans-serif;
-    font-size: 14px;
-    font-weight: bold;
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    width: 100vw;
+  font-family: 'ALS-hauss', sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  width: 100vw;
 
-    &__wrap {
-        display: grid;
-        grid-template-columns: calc(100vw * 0.2) 1fr;
-        gap: 40px;
-    }
+  &__wrap {
+    display: grid;
+    grid-template-columns: calc(100vw * 0.2) 1fr;
+    gap: 40px;
+  }
 }
 
 .SideMenu__container {
-    display: flex;
-    justify-content: flex-start;
-    z-index: 199;
-    position: sticky;
-    top: 75px;    
-    left: 0;
-    height: calc(100vh - 75px);
+  display: flex;
+  justify-content: flex-start;
+  z-index: 199;
+  position: sticky;
+  top: 75px;
+  left: 0;
+  height: calc(100vh - 75px);
 }
 
 .MainContent {
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    margin: 2em 0 0;
-    padding-right: 40px;
-    width: 100%;
-    color: black;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  margin: 2em 0 0;
+  padding-right: 40px;
+  width: 100%;
+  color: black;
 }
 
-@media (max-width: 1280px){
+@media (max-width: 1280px) {
+}
 
+@media (max-width: 1000px) {
+  .MainContent {
+    margin: 2em 0 0 !important;
   }
-  
-  @media (max-width: 1000px) {
-    .MainContent {
-        margin: 2em 0 0 !important;
-    }
-  }
+}
 
 @media (max-width: 768px) {
-    .ProfilePage__wrap {
-        gap: 20px;
-    }
-    .MainContent {
-        padding-right: 20px;
-    }
-    .SideMenu__container {
-        height: calc(100vh - 60px);
-        top: 60px;
-    }
+  .ProfilePage__wrap {
+    gap: 20px;
+  }
+  .MainContent {
+    padding-right: 20px;
+  }
+  .SideMenu__container {
+    height: calc(100vh - 60px);
+    top: 60px;
+  }
 }

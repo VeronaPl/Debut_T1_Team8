@@ -1,48 +1,55 @@
 // @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
 
 @font-face {
-  font-family: "ALS-hauss";
+  font-family: 'ALS-hauss';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: local("ALS-Hauss"), url(/Frontend/T1_Team8/src/shared/assets/fonts/ALSHauss-Regular.woff2) format("woff2"),url(/Frontend/T1_Team8/src/shared/assets/fonts/ALSHauss-Regular.woff) format("woff")
+  src:
+    local('ALS-Hauss'),
+    url(/Frontend/T1_Team8/src/shared/assets/fonts/ALSHauss-Regular.woff2) format('woff2'),
+    url(/Frontend/T1_Team8/src/shared/assets/fonts/ALSHauss-Regular.woff) format('woff');
 }
 
 @font-face {
-  font-family: "ALS-hauss";
+  font-family: 'ALS-hauss';
   font-style: normal;
   font-weight: 500;
   font-display: swap;
-  src: local("ALS-Hauss"), url(/Frontend/T1_Team8/src/shared/assets/fonts/ALSHauss-Medium.woff2) format("woff2"),url(/Frontend/T1_Team8/src/shared/assets/fonts/ALSHauss-Medium.woff) format("woff")
+  src:
+    local('ALS-Hauss'),
+    url(/Frontend/T1_Team8/src/shared/assets/fonts/ALSHauss-Medium.woff2) format('woff2'),
+    url(/Frontend/T1_Team8/src/shared/assets/fonts/ALSHauss-Medium.woff) format('woff');
 }
 
 @font-face {
-  font-family: "ALS-hauss";
+  font-family: 'ALS-hauss';
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: local("ALS-Hauss"), url(/Frontend/T1_Team8/src/shared/assets/fonts/ALSHauss-Bold.woff2) format("woff2"),url(/Frontend/T1_Team8/src/shared/assets/fonts/ALSHauss-Bold.woff) format("woff")
+  src:
+    local('ALS-Hauss'),
+    url(/Frontend/T1_Team8/src/shared/assets/fonts/ALSHauss-Bold.woff2) format('woff2'),
+    url(/Frontend/T1_Team8/src/shared/assets/fonts/ALSHauss-Bold.woff) format('woff');
 }
 
 $bg-color: #fff;
 $backgoungColorPages: #fff;
-$fontFamily: "ALS-hauss", Arial, Helvetica, sans-serif;
-$red: #FF5B69;
+$fontFamily: 'ALS-hauss', Arial, Helvetica, sans-serif;
+$red: #ff5b69;
 $light-red: #fbbdc2;
-$green: #8EFF59;
-$blue: #00AAE6;
-$light-blue: #D5F0FF;
+$green: #8eff59;
+$blue: #00aae6;
+$light-blue: #d5f0ff;
 $default-font-size: 18px;
-$block-bg: #C9CBD3;
-$light-grey: #F7F7F8;
+$block-bg: #c9cbd3;
+$light-grey: #f7f7f8;
 
 $media-breakpoint-768: 768px;
 $media-breakpoint-1000: 1000px;
 $media-breakpoint-1280: 1280px;
 $media-breakpoint-1440: 1440px;
 $media-breakpoint-480: 480px;
-
-
 
 :root {
   font-family: $fontFamily;
@@ -67,4 +74,3 @@ body {
 h1 {
   margin: 0;
 }
-

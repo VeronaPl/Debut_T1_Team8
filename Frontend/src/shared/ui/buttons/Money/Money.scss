@@ -1,45 +1,44 @@
 @import '../../../../app/App.scss';
 
 .money_button {
-    background-color: white;
-    color: $blue;
-    border-radius: 500px;
-    border: none;
+  background-color: white;
+  color: $blue;
+  border-radius: 500px;
+  border: none;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  justify-content: space-between;
+  gap: 10px;
+  cursor: pointer;
+  font-family: 'ALS-hauss', sans-serif;
+  font-weight: 700;
+  font-size: inherit;
+  padding: 0.9ex;
+  padding-left: 1.3ex;
+  padding-right: 1.3ex;
+  white-space: nowrap;
+  line-height: 100%;
+
+  &:hover {
+    opacity: 0.8;
+    transition: opacity 150ms ease-out 0s;
+  }
+  &:active {
+    transform: translate(1px, 1px);
+  }
+
+  span {
+    margin: 0;
+    padding: 0;
+    flex-direction: column;
     display: flex;
-    align-items: center;
-    text-align: center;
-    justify-content: space-between;
-    gap: 10px;
-    cursor: pointer;
-    font-family: 'ALS-hauss', sans-serif;
-    font-weight: 700;
-    font-size: inherit;
-    padding: 0.9ex;
-    padding-left: 1.3ex;
-    padding-right: 1.3ex;
-    white-space:nowrap;
-    line-height: 100%;
-
-    &:hover {
-        opacity: 0.8;
-        transition: opacity 150ms ease-out 0s;
-    }
-    &:active {
-        transform: translate(1px, 1px);
-    }
-
-    span {
-        margin: 0;
-        padding: 0;
-        flex-direction: column;
-        display: flex;
-        justify-content: center;
-
-    }
+    justify-content: center;
+  }
 }
 
 @media (max-width: 768px) {
-    .money_button {
-        font-size: 1rem;
-    }
+  .money_button {
+    font-size: 1rem;
+  }
 }

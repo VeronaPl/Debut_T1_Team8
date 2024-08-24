@@ -6,7 +6,7 @@ import { userStore } from '../../app/store/userStore';
 export const withAuth = <P extends object>(WrappedComponent: React.ComponentType<P>): React.FC<P> => {
   const AuthenticatedComponent: React.FC<P> = observer((props: P) => {
     if (!userStore.isAuth) {
-      return <Navigate to="/login" />;
+      return <Navigate to='/login' />;
     }
 
     return <WrappedComponent {...props} />;
@@ -14,4 +14,3 @@ export const withAuth = <P extends object>(WrappedComponent: React.ComponentType
 
   return AuthenticatedComponent;
 };
-

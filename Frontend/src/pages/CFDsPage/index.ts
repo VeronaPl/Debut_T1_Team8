@@ -1,1 +1,1 @@
-export * from "./CFDsPage"
+export * from './CFDsPage';
