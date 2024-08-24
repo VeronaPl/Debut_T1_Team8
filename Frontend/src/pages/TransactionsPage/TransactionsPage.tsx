@@ -4,6 +4,7 @@ import { LoginButton } from '../../shared';
 import { userStore } from '../../app/store/userStore';
 import { UserTransactionsProps } from '../../app/store/userStore';
 import { MDBTable, MDBTableHead, MDBTableBody, MDBBtn } from 'mdb-react-ui-kit';
+import { MDBIcon } from 'mdbreact';
 import { useNavigate } from 'react-router';
 
 export const TransactionsPage = (): JSX.Element => {
@@ -12,8 +13,23 @@ export const TransactionsPage = (): JSX.Element => {
 
   const [searchValue, setSearchValue] = useState<string>('');
   const [searchResults, setSearchResults] = useState<UserTransactionsProps[]>([...userStore.transactions]);
+  const [order, setOrder] = useState<'asc' | 'desc'>('asc');
+  const [sortType, setSortType] = useState<keyof UserTransactionsProps>('username_sender');
 
   const route = useNavigate();
+
+  const sorting = (col: keyof UserTransactionsProps) => {
+    if (order === 'asc') {
+      const sorted = [...searchResults].sort((a, b) => (a[col].toString().toLowerCase() > b[col].toString().toLowerCase() ? 1 : -1));
+      setSearchResults(sorted);
+      setOrder('desc');
+    } else {
+      const sorted = [...searchResults].sort((a, b) => (a[col].toString().toLowerCase() > b[col].toString().toLowerCase() ? -1 : 1));
+      setSearchResults(sorted);
+      setOrder('asc');
+    }
+    setSortType(col);
+  }
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,10 +85,10 @@ export const TransactionsPage = (): JSX.Element => {
             <MDBTableHead light >
               <tr className='dataAnaliz__table__head' style={{"fontSize": "18px" , "fontWeight": "600"}}>
                 <th scope='col'>№</th>
-                <th scope='col'>Отправитель</th>
-                <th scope='col'>Получатель</th>
-                <th scope='col'>Сумма</th>
-                <th scope='col'>Дата</th>
+                <th scope='col' onClick={() => sorting('username_sender')}>Отправитель  { sortType === 'username_sender' && <span><MDBIcon fas className='dataAnaliz__table__head_arrow' icon={`arrow-${ order === 'asc' ? "down" : "up"}`} /></span>}</th>
+                <th scope='col' onClick={() => sorting('username_recipient')}>Получатель  { sortType === 'username_recipient' && <span><MDBIcon fas className='dataAnaliz__table__head_arrow' icon={`arrow-${ order === 'asc' ? "down" : "up"}`} /></span>}</th>
+                <th scope='col' onClick={() => sorting('sum')}>Сумма  { sortType === 'sum' && <span><MDBIcon fas className='dataAnaliz__table__head_arrow' icon={`arrow-${ order === 'asc' ? "down" : "up"}`} /></span>}</th>
+                <th scope='col' onClick={() => sorting('date_time')}>Дата  { sortType === 'date_time' && <span><MDBIcon fas className='dataAnaliz__table__head_arrow' icon={`arrow-${ order === 'asc' ? "down" : "up"}`} /></span>}</th>
               </tr>
             </MDBTableHead>
             {searchResults.length === 0 ? (

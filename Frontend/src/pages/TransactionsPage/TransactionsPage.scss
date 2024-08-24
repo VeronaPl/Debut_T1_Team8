@@ -31,7 +31,7 @@
                 border: 2px solid $block-bg;
                 font-size: 18px;
                 padding: 0 20px;
-                width: 100%;
+                width: calc(100% - 90px);
                 font-weight: 400;
             }
 
@@ -58,6 +58,15 @@
                 &:active {
                     opacity: 0.8;
                     transition: opacity 150ms ease-out 0s;
+                }
+            }
+        }
+
+        &__table {
+            &__head {
+                &_arrow {
+                    color: $blue;
+                    border: none;
                 }
             }
         }
