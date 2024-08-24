@@ -1,3 +1,0 @@
-admin, new_nik7, log2 -- пароль 12345
-log3 -- пароль 7777
-llgg, qwery, loglog3, newnew1 -- пароль qwerty
