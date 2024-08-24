@@ -113,7 +113,7 @@ public class OwnerController {
         tran.setType("cfoToCFO");
         tran.setSum(s);
         transactionService.create(tran);
-        return new ResponseEntity<>(new TransactionReq(tran, cfoService, personService), HttpStatus.OK);
+        return new ResponseEntity<>(new TransactionReq(tran, cfoService, personService, allidService), HttpStatus.OK);
     }
 
     @Operation(summary = "Перевод пользователю по Id", security = {@SecurityRequirement(name = "bearer-key")})
@@ -151,7 +151,7 @@ public class OwnerController {
         tran.setType("cfoToPerson");
         tran.setSum(s);
         transactionService.create(tran);
-        return new ResponseEntity<>(new TransactionReq(tran, cfoService, personService), HttpStatus.OK);
+        return new ResponseEntity<>(new TransactionReq(tran, cfoService, personService, allidService), HttpStatus.OK);
     }
 
     @Operation(summary = "Перевод пользователю по Логину", security = {@SecurityRequirement(name = "bearer-key")})
@@ -190,7 +190,7 @@ public class OwnerController {
         tran.setType("cfoToPerson");
         tran.setSum(s);
         transactionService.create(tran);
-        return new ResponseEntity<>(new TransactionReq(tran, cfoService, personService), HttpStatus.OK);
+        return new ResponseEntity<>(new TransactionReq(tran, cfoService, personService, allidService), HttpStatus.OK);
     }
 
     @Operation(summary = "Просмотр истории операций (type = 'cfoes' or 'users' or 'admin' or '')) формат даты 'yyyy-MM-dd HH:mm:ss'",
@@ -273,7 +273,7 @@ public class OwnerController {
         }
 
         return transactions != null &&  !transactions.isEmpty()
-                ? new ResponseEntity<>(transactions.stream().map(t -> new TransactionReq(t, cfoService, personService)).collect(Collectors.toList()), HttpStatus.OK)
+                ? new ResponseEntity<>(transactions.stream().map(t -> new TransactionReq(t, cfoService, personService, allidService)).collect(Collectors.toList()), HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 

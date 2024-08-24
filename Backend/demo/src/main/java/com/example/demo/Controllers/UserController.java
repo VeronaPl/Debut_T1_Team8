@@ -87,7 +87,7 @@ public class UserController {
         tran.setType("personToPerson");
         tran.setSum(s);
         transactionService.create(tran);
-        return new ResponseEntity<>(new TransactionReq(tran, cfoService, personService), HttpStatus.OK);
+        return new ResponseEntity<>(new TransactionReq(tran, cfoService, personService, allidService), HttpStatus.OK);
     }
 
     @Operation(summary = "Перевод пользователю по ID", security = {@SecurityRequirement(name = "bearer-key")})
@@ -120,7 +120,7 @@ public class UserController {
         tran.setType("personToPerson");
         tran.setSum(s);
         transactionService.create(tran);
-        return new ResponseEntity<>(new TransactionReq(tran, cfoService, personService), HttpStatus.OK);
+        return new ResponseEntity<>(new TransactionReq(tran, cfoService, personService, allidService), HttpStatus.OK);
     }
 
     @Operation(summary = "Перевод коинов в магазин", security = {@SecurityRequirement(name = "bearer-key")})
@@ -147,7 +147,7 @@ public class UserController {
         tran.setType("personToShop");
         tran.setSum(s);
         transactionService.create(tran);
-        return new ResponseEntity<>(new TransactionReq(tran, cfoService, personService), HttpStatus.OK);
+        return new ResponseEntity<>(new TransactionReq(tran, cfoService, personService, allidService), HttpStatus.OK);
     }
 
 
@@ -206,7 +206,7 @@ public class UserController {
                                 Objects.equals(t.getType(), "personToShop") || Objects.equals(t.getType(), "cfoToPerson"))).toList();
 
         return transactions != null &&  !transactions.isEmpty()
-                ? new ResponseEntity<>(transactions.stream().map(t -> new TransactionReq(t, cfoService, personService)).collect(Collectors.toList()), HttpStatus.OK)
+                ? new ResponseEntity<>(transactions.stream().map(t -> new TransactionReq(t, cfoService, personService, allidService)).collect(Collectors.toList()), HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
@@ -223,7 +223,7 @@ public class UserController {
                         Objects.equals(t.getType(), "personToPerson") || Objects.equals(t.getType(), "cfoToPerson"))).toList();
 
         return transactions != null &&  !transactions.isEmpty()
-                ? new ResponseEntity<>(transactions.stream().map(t -> new TransactionReq(t, cfoService, personService)).collect(Collectors.toList()), HttpStatus.OK)
+                ? new ResponseEntity<>(transactions.stream().map(t -> new TransactionReq(t, cfoService, personService, allidService)).collect(Collectors.toList()), HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
@@ -240,7 +240,7 @@ public class UserController {
                         (Objects.equals(t.getType(), "personToPerson") || Objects.equals(t.getType(), "personToShop"))).toList();
 
         return transactions != null &&  !transactions.isEmpty()
-                ? new ResponseEntity<>(transactions.stream().map(t -> new TransactionReq(t, cfoService, personService)).collect(Collectors.toList()), HttpStatus.OK)
+                ? new ResponseEntity<>(transactions.stream().map(t -> new TransactionReq(t, cfoService, personService, allidService)).collect(Collectors.toList()), HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
@@ -256,7 +256,7 @@ public class UserController {
                 .filter(t -> (Objects.equals(t.getTFrom(), pers.getId()) && Objects.equals(t.getType(), "personToShop"))).toList();
 
         return transactions != null &&  !transactions.isEmpty()
-                ? new ResponseEntity<>(transactions.stream().map(t -> new TransactionReq(t, cfoService, personService)).collect(Collectors.toList()), HttpStatus.OK)
+                ? new ResponseEntity<>(transactions.stream().map(t -> new TransactionReq(t, cfoService, personService, allidService)).collect(Collectors.toList()), HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
@@ -272,7 +272,7 @@ public class UserController {
                 .filter(t -> (Objects.equals(t.getTFrom(), pers.getId()) || Objects.equals(t.getTTo(), pers.getId())) && Objects.equals(t.getType(), "personToPerson")).toList();
 
         return transactions != null &&  !transactions.isEmpty()
-                ? new ResponseEntity<>(transactions.stream().map(t -> new TransactionReq(t, cfoService, personService)).collect(Collectors.toList()), HttpStatus.OK)
+                ? new ResponseEntity<>(transactions.stream().map(t -> new TransactionReq(t, cfoService, personService, allidService)).collect(Collectors.toList()), HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
