@@ -12,13 +12,15 @@ import { useNavigate } from 'react-router';
 
 
 export const DataAnaliz = (): JSX.Element => {
+    // data
+    const [fullData, setFullData] = useState<UserTransactionsProps[]>([...userStore.transactions]);
     // pagination
     const [currentPage, setCurrentPage] = useState(0);
     const [itemsPerPage, setItemsPerPage] = useState(20);
-    const [totalPages, setTotalPages] = useState(Math.ceil([...userStore.transactions].length / itemsPerPage));
+    const [totalPages, setTotalPages] = useState(Math.ceil(fullData.length / itemsPerPage));
     // search
     const [searchValue, setSearchValue] = useState<string>('');
-    const [searchResults, setSearchResults] = useState<UserTransactionsProps[]>([...userStore.transactions].slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage));
+    const [searchResults, setSearchResults] = useState<UserTransactionsProps[]>([...fullData].slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage));
     // filter
     const [CFDs, setCFDs] = useState<CFDsProps[]>([]);
     const types = [{label: 'Пользователю', value: 'ToUser'}, {label: 'Между ЦФО', value: 'BetweenCFDs'}, {label: 'Покупка', value: 'Buy'}];
@@ -34,6 +36,14 @@ export const DataAnaliz = (): JSX.Element => {
     
 
     const route = useNavigate();
+
+    useEffect(() => {
+        setSearchResults([...fullData].slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage));
+    }, [currentPage, itemsPerPage, fullData]);
+
+    useEffect(() => {
+        setTotalPages( Math.ceil(fullData.length / itemsPerPage) );
+    }, [fullData, itemsPerPage, searchValue]);
 
     useEffect(() => {
         getFilteringOptionsCFDs();
@@ -60,17 +70,19 @@ export const DataAnaliz = (): JSX.Element => {
 
     const sorting = (col: keyof UserTransactionsProps) => {
         if (order === 'asc') {
-          const sorted = [...searchResults].sort((a, b) =>
+          const sorted = [...fullData].sort((a, b) =>
             a[col].toString().toLowerCase() > b[col].toString().toLowerCase() ? 1 : -1
           );
-          setSearchResults(sorted);
+          setFullData(sorted);
           setOrder('desc');
+          setCurrentPage(0);
         } else {
-          const sorted = [...searchResults].sort((a, b) =>
+          const sorted = [...fullData].sort((a, b) =>
             a[col].toString().toLowerCase() > b[col].toString().toLowerCase() ? -1 : 1
           );
-          setSearchResults(sorted);
+          setFullData(sorted);
           setOrder('asc');
+          setCurrentPage(0);
         }
         setSortType(col);
       };
@@ -78,7 +90,7 @@ export const DataAnaliz = (): JSX.Element => {
       const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
         const search = searchValue.toLowerCase();
-        const arr = [...searchResults];
+        const arr = [...fullData];
     
         if (search !== '') {
           setSearchResults(
@@ -92,8 +104,10 @@ export const DataAnaliz = (): JSX.Element => {
                 ('id_recipient' in transaction && transaction.id_recipient.toString().toLowerCase().includes(search))
             )
           );
+          setTotalPages(Math.ceil(searchResults.length / itemsPerPage));
         } else {
-          setSearchResults([...userStore.transactions].slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage));
+          setSearchResults([...fullData].slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage));
+          setTotalPages(Math.ceil(fullData.length / itemsPerPage));
         }
       };
     
