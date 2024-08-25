@@ -23,6 +23,8 @@ export const DataAnaliz = (): JSX.Element => {
     const [selectedCFDs, setSelectedCFDs] = useState([]);
     const [selectedOwners, setSelectedOwners] = useState([]);
     const [selectedFilterType, setSelectedFilterType] = useState<string | null>('');
+    const [selectedDateStart, setSelectedDateStart] = useState<string | null>('');
+    const [selectedDateEnd, setSelectedDateEnd] = useState<string | null>('');
 
     const route = useNavigate();
 
@@ -130,11 +132,11 @@ export const DataAnaliz = (): JSX.Element => {
           </div>
           <div className='dataAnaliz__filterSection__select'>
             <label id="SelectDate" className="dataAnaliz__filterSection__select__label">Начало</label>
-            <input type="date" className="dataAnaliz__filterSection__select__item__date" id="start" name="trip-start" />
+            <input type="date" className="dataAnaliz__filterSection__select__item__date" id="start" name="trip-start" onChange={(e) => setSelectedDateStart(e.target.value)}/>
           </div>
           <div className='dataAnaliz__filterSection__select'>
             <label id="SelectDate" className="dataAnaliz__filterSection__select__label">Конец</label>
-            <input type="date" className="dataAnaliz__filterSection__select__item__date" id="end" name="trip-start" />
+            <input type="date" className="dataAnaliz__filterSection__select__item__date" id="end" name="trip-start" onChange={(e) => setSelectedDateEnd(e.target.value)}/>
           </div>
         </div>
 
