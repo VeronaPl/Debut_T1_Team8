@@ -11,11 +11,11 @@ export interface UserTransactionsProps {
 }
 
 class UserAuthorization {
-  token = '';
-  userId = '';
+  #token = '';
+  #userId = '';
   userName = 'username';
   userRole = 'admin'; // admin / owner / user
-  sessionExpiry = 0; // Время через которое заканчивается сессия пользователя
+  #sessionExpiry = 0; // Время через которое заканчивается сессия пользователя
   isAuth = true;
   money = 50;
   transactions: UserTransactionsProps[] = [];
@@ -25,12 +25,24 @@ class UserAuthorization {
   }
 
   setUserData(token: string, userId: string, userName: string, role: string, expiry: number, money: number) {
-    this.token = token;
-    this.userId = userId;
+    this.#token = token;
+    this.#userId = userId;
     this.userName = userName;
     this.userRole = role;
-    this.sessionExpiry = expiry;
+    this.#sessionExpiry = expiry;
     this.money = money;
+  }
+  
+  getUserData() {
+    return {
+      token: this.#token,
+      userId: this.#userId,
+      userName: this.userName,
+      userRole: this.userRole,
+      sessionExpiry: this.#sessionExpiry,
+      isAuth: this.isAuth,
+      money: this.money
+    };
   }
 
   setUserTransactions(transactions: UserTransactionsProps[]) {
@@ -47,11 +59,11 @@ class UserAuthorization {
 
   // Вызывать при истечении срока сессии
   clearUserData() {
-    this.token = '';
-    this.userId = '';
+    this.#token = '';
+    this.#userId = '';
     this.userName = '';
     this.userRole = '';
-    this.sessionExpiry = 0;
+    this.#sessionExpiry = 0;
     this.isAuth = false;
     this.money = 0;
     this.clearUserTransactions();
