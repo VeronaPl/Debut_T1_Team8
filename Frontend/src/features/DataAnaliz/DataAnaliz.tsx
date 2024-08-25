@@ -3,7 +3,7 @@ import './DataAnaliz.scss';
 import { userStore } from '../../app/store/userStore';
 import { CFDsProps } from '../../app/store/userStore';
 import { UserTransactionsProps } from '../../app/store/userStore';
-import { MDBTable, MDBTableHead, MDBTableBody } from 'mdb-react-ui-kit';
+import { MDBTable, MDBTableHead, MDBTableBody, MDBPagination, MDBPaginationItem, MDBPaginationLink } from 'mdb-react-ui-kit';
 import { MultiSelect } from "react-multi-select-component";
 import Select from 'react-select'
 import { MDBIcon } from 'mdbreact';
@@ -12,19 +12,26 @@ import { useNavigate } from 'react-router';
 
 
 export const DataAnaliz = (): JSX.Element => {
-
+    // pagination
+    const [currentPage, setCurrentPage] = useState(0);
+    const [itemsPerPage, setItemsPerPage] = useState(20);
+    const [totalPages, setTotalPages] = useState(Math.ceil([...userStore.transactions].length / itemsPerPage));
+    // search
     const [searchValue, setSearchValue] = useState<string>('');
-    const [searchResults, setSearchResults] = useState<UserTransactionsProps[]>([...userStore.transactions]);
+    const [searchResults, setSearchResults] = useState<UserTransactionsProps[]>([...userStore.transactions].slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage));
+    // filter
     const [CFDs, setCFDs] = useState<CFDsProps[]>([]);
     const types = [{label: 'Пользователю', value: 'ToUser'}, {label: 'Между ЦФО', value: 'BetweenCFDs'}, {label: 'Покупка', value: 'Buy'}];
     const [owners, setOwners] = useState<CFDsProps[]>([]);
-    const [order, setOrder] = useState<'asc' | 'desc'>('asc');
     const [sortType, setSortType] = useState<keyof UserTransactionsProps>('username_sender');
     const [selectedCFDs, setSelectedCFDs] = useState([]);
     const [selectedOwners, setSelectedOwners] = useState([]);
     const [selectedFilterType, setSelectedFilterType] = useState<string | null>('');
     const [selectedDateStart, setSelectedDateStart] = useState<string | null>('');
     const [selectedDateEnd, setSelectedDateEnd] = useState<string | null>('');
+    // sorting 
+    const [order, setOrder] = useState<'asc' | 'desc'>('asc');
+    
 
     const route = useNavigate();
 
@@ -86,9 +93,75 @@ export const DataAnaliz = (): JSX.Element => {
             )
           );
         } else {
-          setSearchResults([...userStore.transactions]);
+          setSearchResults([...userStore.transactions].slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage));
         }
       };
+    
+    const renderPagination = () => {
+        return (
+          <MDBPagination className='mb-0 dataAnaliz__pagination'>
+            {
+              currentPage === 0 ? 
+                <>
+                  <MDBPaginationItem disabled> 
+                    <MDBPaginationLink>
+                      <MDBIcon fas icon="angle-double-left" onClick={() => setCurrentPage(0)}/>
+                    </MDBPaginationLink>
+                  </MDBPaginationItem>
+                  <MDBPaginationItem disabled>
+                    <MDBPaginationLink>
+                      <MDBIcon fas icon="angle-left" onClick={() => setCurrentPage(currentPage - 1)}/>
+                    </MDBPaginationLink>
+                  </MDBPaginationItem>
+                </>
+              : 
+                <>
+                  <MDBPaginationItem> 
+                    <MDBPaginationLink>
+                      <MDBIcon fas icon="angle-double-left" onClick={() => setCurrentPage(0)}/>
+                    </MDBPaginationLink>
+                  </MDBPaginationItem>
+                  <MDBPaginationItem>
+                    <MDBPaginationLink>
+                      <MDBIcon fas icon="angle-left" onClick={() => setCurrentPage(currentPage - 1)}/>
+                    </MDBPaginationLink>
+                  </MDBPaginationItem>
+                </>
+            }
+            <MDBPaginationItem className="dataAnaliz__pagination__current">
+              {currentPage + 1}
+            </MDBPaginationItem>
+            {
+              currentPage === totalPages - 1 ? 
+                <>
+                  <MDBPaginationItem disabled>
+                    <MDBPaginationLink>
+                      <MDBIcon fas icon="angle-right" onClick={() => setCurrentPage(currentPage + 1)}/>
+                    </MDBPaginationLink>
+                  </MDBPaginationItem>
+                  <MDBPaginationItem disabled>
+                    <MDBPaginationLink>
+                      <MDBIcon fas icon="angle-double-right" onClick={() => setCurrentPage(totalPages - 1)}/>
+                    </MDBPaginationLink>
+                  </MDBPaginationItem>
+                </>
+              : 
+                <>
+                  <MDBPaginationItem>
+                    <MDBPaginationLink>
+                      <MDBIcon fas icon="angle-right" onClick={() => setCurrentPage(currentPage + 1)}/>
+                    </MDBPaginationLink>
+                  </MDBPaginationItem>
+                  <MDBPaginationItem>
+                    <MDBPaginationLink>
+                      <MDBIcon fas icon="angle-double-right" onClick={() => setCurrentPage(totalPages - 1)}/>
+                    </MDBPaginationLink>
+                  </MDBPaginationItem>
+                </>
+            }
+          </MDBPagination>
+        );
+    };
 
     return (
         <div className='dataAnaliz'>
@@ -194,9 +267,9 @@ export const DataAnaliz = (): JSX.Element => {
               </MDBTableBody>
             ) : (
               searchResults.map((transaction: UserTransactionsProps, index: number) => (
-                <MDBTableBody key={index}>
+                <MDBTableBody key={index + currentPage * itemsPerPage}>
                   <tr>
-                    <th scope='row'>{index + 1}</th>
+                    <th scope='row'>{index + 1 + currentPage * itemsPerPage}</th>
                     <td
                       className='clickable'
                       onClick={() => {
@@ -220,6 +293,10 @@ export const DataAnaliz = (): JSX.Element => {
               ))
             )}
           </MDBTable>
+        </div>
+
+        <div className='dataAnaliz__pagination'>
+          {renderPagination()}
         </div>
       </div>
     );

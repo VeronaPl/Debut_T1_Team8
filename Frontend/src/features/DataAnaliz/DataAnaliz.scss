@@ -91,6 +91,27 @@
         }
       }
     }
+
+    &__pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: $blue;
+      height: 50px;
+
+      &__current {
+        font-weight: 900;
+        font-size: 24px;
+        color: black;
+        margin: 0 10px;
+        text-align: center;
+        cursor: default;
+      }
+    }
+    .pagination .page-item .page-link {
+      color: $blue;
+      font-size: 2rem;
+    }
 }
 
 .MDBTable {
