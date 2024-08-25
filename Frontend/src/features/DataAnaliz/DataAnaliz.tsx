@@ -1,45 +1,52 @@
 import React, { useState, useEffect } from "react";
 import './DataAnaliz.scss';
 import { userStore } from '../../app/store/userStore';
+import { CFDsProps } from '../../app/store/userStore';
 import { UserTransactionsProps } from '../../app/store/userStore';
 import { MDBTable, MDBTableHead, MDBTableBody } from 'mdb-react-ui-kit';
 import { MultiSelect } from "react-multi-select-component";
+import Select from 'react-select'
 import { MDBIcon } from 'mdbreact';
 import { useNavigate } from 'react-router';
 
-interface CFDsProps {
-    label: string;
-    value: string;
-}
+
 
 export const DataAnaliz = (): JSX.Element => {
 
     const [searchValue, setSearchValue] = useState<string>('');
     const [searchResults, setSearchResults] = useState<UserTransactionsProps[]>([...userStore.transactions]);
     const [CFDs, setCFDs] = useState<CFDsProps[]>([]);
+    const types = [{label: 'Пользователю', value: 'ToUser'}, {label: 'Между ЦФО', value: 'BetweenCFDs'}, {label: 'Покупка', value: 'Buy'}];
     const [owners, setOwners] = useState<CFDsProps[]>([]);
     const [order, setOrder] = useState<'asc' | 'desc'>('asc');
     const [sortType, setSortType] = useState<keyof UserTransactionsProps>('username_sender');
     const [selectedCFDs, setSelectedCFDs] = useState([]);
     const [selectedOwners, setSelectedOwners] = useState([]);
+    const [selectedFilterType, setSelectedFilterType] = useState<string | null>('');
 
     const route = useNavigate();
 
     useEffect(() => {
-        getFilteringOptions('username_sender', CFDs, setCFDs);
-        getFilteringOptions('username_recipient', owners, setOwners);
-    }, [userStore.transactions]);
+        getFilteringOptionsCFDs();
+        getFilteringOptionsOwners();
+    }, [userStore.transactions, userStore.owners]);
 
-    const getFilteringOptions = (type: keyof UserTransactionsProps, array: CFDsProps[], setArray: React.Dispatch<React.SetStateAction<CFDsProps[]>>) => {
-        if (userStore.transactions.length !== 0) {
-            for (let i = 0; i < userStore.transactions.length; i++) {
-                if (type in userStore.transactions[i] && !array.includes({ label: userStore.transactions[i].type, value: userStore.transactions[i].type})) {
-                    setArray((array: CFDsProps[]) => [...array, { label: userStore.transactions[i].type, value: userStore.transactions[i].type}]);
-                }
-            }
-        }
-        const uniqueCFDs = array.filter((CFD, index) => array.findIndex((CFD2) => CFD2.value === CFD.value) === index);
+    const getFilteringOptionsCFDs = () => {
+      if (userStore.transactions.length !== 0) {
+        const uniqueCFDs = userStore.transactions.filter((transaction, index, self) =>
+          index === self.findIndex((t) => t.username_sender === transaction.username_sender)
+        ).map((transaction) => ({ label: transaction.username_sender, value: transaction.username_sender }));
         setCFDs(uniqueCFDs);
+      }
+    }
+
+    const getFilteringOptionsOwners = () => {
+      if (userStore.owners.length !== 0) {
+        const uniqueOwners = userStore.owners.filter((owner, index, self) =>
+          index === self.findIndex((o) => o.value === owner.value)
+        ).map((owner) => ({ label: owner.label, value: owner.value }));
+        setOwners(uniqueOwners);
+      }
     }
 
     const sorting = (col: keyof UserTransactionsProps) => {
@@ -97,20 +104,38 @@ export const DataAnaliz = (): JSX.Element => {
         </form>
 
         <div className='dataAnaliz__filterSection'>
+          <div className='dataAnaliz__filterSection__select'>
+            <label id="SelectCFDs" className="dataAnaliz__filterSection__select__label">По ЦФО</label>
             <MultiSelect
-            className='dataAnaliz__filterSection__select'
-            options={CFDs}
-            value={selectedCFDs}
-            onChange={setSelectedCFDs}
-            labelledBy="SelectCFDs"
-        />
+              className='dataAnaliz__filterSection__select__item'
+              options={CFDs}
+              value={selectedCFDs}
+              onChange={setSelectedCFDs}
+              labelledBy="SelectCFDs"
+            />
+          </div>
+          <div className='dataAnaliz__filterSection__select'>
+            <label id="SelectType" className="dataAnaliz__filterSection__select__label">По типу</label>
+            <Select className='dataAnaliz__filterSection__select__item' options={types} value={selectedFilterType} onChange={setSelectedFilterType} isClearable={true}/>
+          </div>
+          <div className='dataAnaliz__filterSection__select'>
+            <label id="SelectOwners" className="dataAnaliz__filterSection__select__label">По владельцу</label>
             <MultiSelect
-            className='dataAnaliz__filterSection__select'
+            className='dataAnaliz__filterSection__select__item'
             options={owners}
             value={selectedOwners}
             onChange={setSelectedOwners}
             labelledBy="SelectOwners"
-        />
+            />
+          </div>
+          <div className='dataAnaliz__filterSection__select'>
+            <label id="SelectDate" className="dataAnaliz__filterSection__select__label">Начало</label>
+            <input type="date" className="dataAnaliz__filterSection__select__item__date" id="start" name="trip-start" />
+          </div>
+          <div className='dataAnaliz__filterSection__select'>
+            <label id="SelectDate" className="dataAnaliz__filterSection__select__label">Конец</label>
+            <input type="date" className="dataAnaliz__filterSection__select__item__date" id="end" name="trip-start" />
+          </div>
         </div>
 
         <div className='dataAnaliz__table'>
@@ -181,7 +206,7 @@ export const DataAnaliz = (): JSX.Element => {
                     <td
                       className='clickable'
                       onClick={() => {
-                        route(`/${transaction.username_sender}`);
+                        route(`/${transaction.username_recipient}`);
                       }}
                     >
                       {transaction.username_recipient}

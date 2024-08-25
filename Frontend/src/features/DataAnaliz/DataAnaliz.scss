@@ -48,6 +48,32 @@
       margin-bottom: 20px;
 
       &__select {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        
+        &__label {
+          font-weight: 600;
+          font-size: 16px;
+          color: #7b7979;
+          opacity: 1;
+        }
+        &__item {
+          &__date input {
+            border: #7b7979 1px solid;
+            border-radius: 5px;
+            color: #7b7979;
+
+          }
+        }
+
+        .css-tj5bde-Svg:hover {
+          cursor: pointer;
+        }
+        .css-1u9des2-indicatorSeparator {
+          display: none;
+        }
       }
     }
 
@@ -108,6 +134,14 @@
           &__table {
             max-width: 50%;
             overflow-x: scroll;
+          }
+        }
+  
+        &__filterSection {
+          &__select {
+            &__label {
+              font-size: 12px;
+            }
           }
         }
       }

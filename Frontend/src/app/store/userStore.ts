@@ -10,6 +10,11 @@ export interface UserTransactionsProps {
   date_time: string;
 }
 
+export interface CFDsProps {
+  label: string;
+  value: string;
+}
+
 class UserAuthorization {
   #token = '';
   #userId = '';
@@ -19,6 +24,9 @@ class UserAuthorization {
   isAuth = true;
   money = 50;
   transactions: UserTransactionsProps[] = [];
+  owners: CFDsProps[] = [];
+  CFDs: CFDsProps[] = [];
+  users: CFDsProps[] = [];
 
   constructor() {
     makeAutoObservable(this);
@@ -49,6 +57,18 @@ class UserAuthorization {
     this.transactions = transactions;
   }
 
+  setUserOwners(owners: CFDsProps[]) {
+    this.owners = owners;
+  }
+
+  setUserCFDs(CFDs: CFDsProps[]) {
+    this.CFDs = CFDs;
+  }
+
+  setUserUsers(users: CFDsProps[]) {
+    this.users = users;
+  }
+
   // метод для установки статуса авторизации
   setUserAuth(isAuth: boolean) {
     this.isAuth = isAuth;
@@ -66,11 +86,14 @@ class UserAuthorization {
     this.#sessionExpiry = 0;
     this.isAuth = false;
     this.money = 0;
-    this.clearUserTransactions();
+    this.clearUserLists();
   }
 
-  clearUserTransactions() {
+  clearUserLists() {
     this.transactions = [];
+    this.owners = [];
+    this.CFDs = [];
+    this.users = [];
   }
 }
 
