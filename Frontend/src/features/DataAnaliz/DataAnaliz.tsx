@@ -90,10 +90,11 @@ export const DataAnaliz = (): JSX.Element => {
       const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
         const search = searchValue.toLowerCase();
-        const arr = [...fullData];
+        const arr = [...userStore.transactions];
     
         if (search !== '') {
-          setSearchResults(
+          setCurrentPage(0);
+          setFullData(
             arr.filter(
               (transaction: UserTransactionsProps) =>
                 ('username_sender' in transaction &&
@@ -104,10 +105,9 @@ export const DataAnaliz = (): JSX.Element => {
                 ('id_recipient' in transaction && transaction.id_recipient.toString().toLowerCase().includes(search))
             )
           );
-          setTotalPages(Math.ceil(searchResults.length / itemsPerPage));
         } else {
-          setSearchResults([...fullData].slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage));
-          setTotalPages(Math.ceil(fullData.length / itemsPerPage));
+          setCurrentPage(0);
+          setFullData([...userStore.transactions]);
         }
       };
     
