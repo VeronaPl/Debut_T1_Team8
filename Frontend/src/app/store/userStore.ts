@@ -6,8 +6,19 @@ export interface UserTransactionsProps {
   username_sender: string;
   id_recipient: string;
   username_recipient: string;
+  type: string;
+  owner?: string;
   sum: number;
   date_time: string;
+}
+
+export interface OwnerProps {
+  id: number;
+  firstName: string;
+  lastName: string;
+  averageName: string;
+  login: string;
+  CFDs: string[];
 }
 
 export interface CFDsProps {
