@@ -110,6 +110,42 @@ export const DataAnaliz = (): JSX.Element => {
           setFullData([...userStore.transactions]);
         }
       };
+
+    const handleFiltering = (filterType: string) => {
+      setCurrentPage(0);
+      const arr = [...userStore.transactions];
+
+      switch (filterType) {
+        case 'SelectCFDs':
+          setFullData(
+            arr.filter(
+              (transaction: UserTransactionsProps) =>
+                (('type' in transaction && transaction.type == 'BetweenCFDs') &&
+                (('username_sender' in transaction &&
+                  transaction.username_sender in selectedCFDs) ||
+                ('username_recipient' in transaction &&
+                  transaction.username_recipient.toString() in selectedCFDs) ||
+                ('id_sender' in transaction && transaction.id_sender in selectedCFDs) ||
+                ('id_recipient' in transaction && transaction.id_recipient in selectedCFDs)))
+            )
+          )
+          break;
+        case 'SelectType':
+          setFullData(
+            arr.filter(
+              (transaction: UserTransactionsProps) =>
+                (('type' in transaction && transaction.type == 'BetweenCFDs') &&
+                (('username_sender' in transaction &&
+                  transaction.username_sender in selectedCFDs) ||
+                ('username_recipient' in transaction &&
+                  transaction.username_recipient.toString() in selectedCFDs) ||
+                ('id_sender' in transaction && transaction.id_sender in selectedCFDs) ||
+                ('id_recipient' in transaction && transaction.id_recipient in selectedCFDs)))
+            )
+          )
+      }
+      
+    }
     
     const renderPagination = () => {
         return (
@@ -199,13 +235,13 @@ export const DataAnaliz = (): JSX.Element => {
               className='dataAnaliz__filterSection__select__item'
               options={CFDs}
               value={selectedCFDs}
-              onChange={setSelectedCFDs}
+              onChange={() => {setSelectedCFDs(e.target.value); handleFiltering('SelectCFDs')}}
               labelledBy="SelectCFDs"
             />
           </div>
           <div className='dataAnaliz__filterSection__select'>
             <label id="SelectType" className="dataAnaliz__filterSection__select__label">По типу</label>
-            <Select className='dataAnaliz__filterSection__select__item' options={types} value={selectedFilterType} onChange={setSelectedFilterType} isClearable={true}/>
+            <Select className='dataAnaliz__filterSection__select__item' options={types} value={selectedFilterType} onChange={(e) => {console.log(e); setSelectedFilterType(e); handleFiltering('SelectType')}} isClearable={true}/>
           </div>
           <div className='dataAnaliz__filterSection__select'>
             <label id="SelectOwners" className="dataAnaliz__filterSection__select__label">По владельцу</label>
