@@ -53,7 +53,7 @@ export const DataAnaliz = (): JSX.Element => {
 
   useEffect(() => {
     setTotalPages(Math.ceil(fullData.length / itemsPerPage));
-  }, [fullData, itemsPerPage, searchValue]);
+  }, [fullData, itemsPerPage, searchValue, selectedFilterType, selectedDateStart, selectedDateEnd, selectedOwners, selectedCFDs]);
 
   useEffect(() => {
     getFilteringOptionsCFDs();
@@ -159,29 +159,26 @@ export const DataAnaliz = (): JSX.Element => {
     switch (filterType) {
       case 'SelectCFDs':
         if (selectedCFDs.length === 0) {
-          setCurrentPage(0);
           setFullData([...userStore.transactions]);
         } else {
-          setCurrentPage(0);
+          const selectedCFDsArray = selectedCFDs.map((cfds) => cfds.value);
           setFullData(
             arr.filter(
               (transaction: UserTransactionsProps) =>
                 'type' in transaction &&
                 transaction.type == 'BetweenCFDs' &&
-                (('username_sender' in transaction && transaction.username_sender in selectedCFDs) ||
-                  ('username_recipient' in transaction && transaction.username_recipient.toString() in selectedCFDs) ||
-                  ('id_sender' in transaction && transaction.id_sender in selectedCFDs) ||
-                  ('id_recipient' in transaction && transaction.id_recipient in selectedCFDs))
+                (('username_sender' in transaction && transaction.username_sender in selectedCFDsArray) ||
+                  ('username_recipient' in transaction && transaction.username_recipient in selectedCFDsArray) ||
+                  ('id_sender' in transaction && transaction.id_sender in selectedCFDsArray) ||
+                  ('id_recipient' in transaction && transaction.id_recipient in selectedCFDsArray))
             )
           );
         }
         break;
       case 'SelectType':
         if (selectedFilterType === null) {
-          setCurrentPage(0);
           setFullData([...userStore.transactions]);
         } else {
-          setCurrentPage(0);
           setFullData(
             arr.filter(
               (transaction: UserTransactionsProps) => 'type' in transaction && transaction.type == selectedFilterType
@@ -190,11 +187,10 @@ export const DataAnaliz = (): JSX.Element => {
         }
         break;
       case 'SelectOwners':
+        setCurrentPage(0);
         if (selectedOwners.length === 0) {
-          setCurrentPage(0);
           setFullData([...userStore.transactions]);
         } else {
-          setCurrentPage(0);
           setFullData(
             arr.filter(
               (transaction: UserTransactionsProps) =>
@@ -359,7 +355,7 @@ export const DataAnaliz = (): JSX.Element => {
               className='dataAnaliz__filterSection__select__item'
               options={CFDs}
               value={selectedCFDs}
-              onChange={setSelectedCFDs}
+              onChange={(e) => {setSelectedCFDs(e); handleFiltering('SelectCFDs')}}
               labelledBy='SelectCFDs'
             />
           </div>
