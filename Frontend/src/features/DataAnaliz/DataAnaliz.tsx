@@ -25,7 +25,6 @@ export const DataAnaliz = (): JSX.Element => {
     const [CFDs, setCFDs] = useState<CFDsProps[]>([]);
     const types = [{label: 'Пользователю', value: 'ToUser'}, {label: 'Между ЦФО', value: 'BetweenCFDs'}, {label: 'Покупка', value: 'Buy'}];
     const [owners, setOwners] = useState<CFDsProps[]>([]);
-    const [sortType, setSortType] = useState<keyof UserTransactionsProps>('username_sender');
     const [selectedCFDs, setSelectedCFDs] = useState([]);
     const [selectedOwners, setSelectedOwners] = useState([]);
     const [selectedFilterType, setSelectedFilterType] = useState<string | null>('');
@@ -33,7 +32,7 @@ export const DataAnaliz = (): JSX.Element => {
     const [selectedDateEnd, setSelectedDateEnd] = useState<string | null>('');
     // sorting 
     const [order, setOrder] = useState<'asc' | 'desc'>('asc');
-    
+    const [sortType, setSortType] = useState<keyof UserTransactionsProps>('username_sender');
 
     const route = useNavigate();
 
@@ -62,13 +61,14 @@ export const DataAnaliz = (): JSX.Element => {
     const getFilteringOptionsOwners = () => {
       if (userStore.owners.length !== 0) {
         const uniqueOwners = userStore.owners.filter((owner, index, self) =>
-          index === self.findIndex((o) => o.value === owner.value)
-        ).map((owner) => ({ label: owner.label, value: owner.value }));
+          index === self.findIndex((o) => o.login === owner.login)
+        ).map((owner) => ({ label: owner.login, value: owner.login }));
         setOwners(uniqueOwners);
       }
     }
 
     const sorting = (col: keyof UserTransactionsProps) => {
+      if (col !== 'date_time') {
         if (order === 'asc') {
           const sorted = [...fullData].sort((a, b) =>
             a[col].toString().toLowerCase() > b[col].toString().toLowerCase() ? 1 : -1
@@ -85,7 +85,29 @@ export const DataAnaliz = (): JSX.Element => {
           setCurrentPage(0);
         }
         setSortType(col);
-      };
+      } else {
+        if (order === 'asc') {
+          const sorted = [...fullData].sort((a, b) => {
+              const dateA = a[col].split('.').reverse().join('-');
+              const dateB = b[col].split('.').reverse().join('-');
+              return dateA.localeCompare(dateB);
+          });
+          setFullData(sorted);
+          setOrder('desc');
+          setCurrentPage(0);
+        } else {
+          const sorted = [...fullData].sort((a, b) => {
+              const dateA = a[col].split('.').reverse().join('-');
+              const dateB = b[col].split('.').reverse().join('-');
+              return dateB.localeCompare(dateA);
+          });
+          setFullData(sorted);
+          setOrder('asc');
+          setCurrentPage(0);
+        }
+        setSortType(col);
+      }
+    };
     
       const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
@@ -108,6 +130,11 @@ export const DataAnaliz = (): JSX.Element => {
         } else {
           setCurrentPage(0);
           setFullData([...userStore.transactions]);
+          setSelectedCFDs([]);
+          setSelectedOwners([]);
+          setSelectedFilterType(null);
+          setSelectedDateStart('');
+          setSelectedDateEnd('');
         }
       };
 
@@ -117,34 +144,111 @@ export const DataAnaliz = (): JSX.Element => {
 
       switch (filterType) {
         case 'SelectCFDs':
-          setFullData(
-            arr.filter(
-              (transaction: UserTransactionsProps) =>
-                (('type' in transaction && transaction.type == 'BetweenCFDs') &&
-                (('username_sender' in transaction &&
-                  transaction.username_sender in selectedCFDs) ||
-                ('username_recipient' in transaction &&
-                  transaction.username_recipient.toString() in selectedCFDs) ||
-                ('id_sender' in transaction && transaction.id_sender in selectedCFDs) ||
-                ('id_recipient' in transaction && transaction.id_recipient in selectedCFDs)))
+          if (selectedCFDs.length === 0) {
+            setCurrentPage(0);
+            setFullData([...userStore.transactions]);
+          } else {
+            setCurrentPage(0);
+            setFullData(
+              arr.filter(
+                (transaction: UserTransactionsProps) =>
+                  (('type' in transaction && transaction.type == 'BetweenCFDs') &&
+                  (('username_sender' in transaction &&
+                    transaction.username_sender in selectedCFDs) ||
+                  ('username_recipient' in transaction &&
+                    transaction.username_recipient.toString() in selectedCFDs) ||
+                  ('id_sender' in transaction && transaction.id_sender in selectedCFDs) ||
+                  ('id_recipient' in transaction && transaction.id_recipient in selectedCFDs)))
+              )
             )
-          )
+          }
           break;
         case 'SelectType':
-          setFullData(
-            arr.filter(
-              (transaction: UserTransactionsProps) =>
-                (('type' in transaction && transaction.type == 'BetweenCFDs') &&
-                (('username_sender' in transaction &&
-                  transaction.username_sender in selectedCFDs) ||
-                ('username_recipient' in transaction &&
-                  transaction.username_recipient.toString() in selectedCFDs) ||
-                ('id_sender' in transaction && transaction.id_sender in selectedCFDs) ||
-                ('id_recipient' in transaction && transaction.id_recipient in selectedCFDs)))
+          if (selectedFilterType === null) {
+            setCurrentPage(0);
+            setFullData([...userStore.transactions]);
+          } else {
+            setCurrentPage(0);
+            setFullData(
+              arr.filter(
+                (transaction: UserTransactionsProps) =>
+                  ('type' in transaction && transaction.type == selectedFilterType)
+              )
             )
-          )
+          }
+          break;
+        case 'SelectOwners':
+          if (selectedOwners.length === 0) {
+            setCurrentPage(0);
+            setFullData([...userStore.transactions]);
+          } else {
+            setCurrentPage(0);
+            setFullData(
+              arr.filter(
+                (transaction: UserTransactionsProps) =>
+                  (('type' in transaction && transaction.type == 'BetweenCFDs') &&
+                  ('owner' in transaction && transaction.owner in selectedOwners))
+              )
+            )
+          }
+          break;
+        case 'SelectDateStart':
+          if (selectedDateStart === '') {
+            setCurrentPage(0);
+            setFullData([...userStore.transactions]);
+          } else {
+            setCurrentPage(0);
+            if (selectedDateEnd === '') {
+              setFullData(
+                arr.filter(
+                  (transaction: UserTransactionsProps) =>
+                    ('date_time' in transaction && new Date(convertDateFormat(transaction.date_time.toString())) >= new Date(selectedDateStart))
+                )
+              )
+            } else {
+              setFullData(
+                arr.filter(
+                  (transaction: UserTransactionsProps) =>
+                    ('date_time' in transaction && new Date(convertDateFormat(transaction.date_time.toString())) >= new Date(selectedDateStart) && new Date(convertDateFormat(transaction.date_time.toString())) <= new Date(selectedDateEnd))
+                )
+              )
+            }
+            
+          }
+          break;
+        case 'SelectDateEnd':
+          if (selectedDateEnd === '') {
+            setCurrentPage(0);
+            setFullData([...userStore.transactions]);
+          } else {
+            setCurrentPage(0);
+            if (selectedDateStart === '') {
+              setFullData(
+                arr.filter(
+                  (transaction: UserTransactionsProps) =>
+                    ('date_time' in transaction && new Date(convertDateFormat(transaction.date_time.toString())) <= new Date(selectedDateEnd))
+                )
+              )
+            } else {
+              setFullData(
+                arr.filter(
+                  (transaction: UserTransactionsProps) =>
+                    ('date_time' in transaction && (new Date(convertDateFormat(transaction.date_time.toString())) <= new Date(selectedDateEnd)) && (new Date(convertDateFormat(transaction.date_time.toString())) >= new Date(selectedDateStart)))
+                )
+              ) 
+            }
+          }
+          break;
+        default:
+          setFullData([...userStore.transactions]);
+          break;
       }
       
+    }
+
+    const convertDateFormat = (dateString: string): string => { {/*from '14.01.2022' to '2022-01-14'*/}
+      const dateConverted = dateString.split('.').reverse().join('-');
+      return dateConverted;
     }
     
     const renderPagination = () => {
@@ -229,38 +333,46 @@ export const DataAnaliz = (): JSX.Element => {
         </form>
 
         <div className='dataAnaliz__filterSection'>
-          <div className='dataAnaliz__filterSection__select'>
-            <label id="SelectCFDs" className="dataAnaliz__filterSection__select__label">По ЦФО</label>
-            <MultiSelect
-              className='dataAnaliz__filterSection__select__item'
-              options={CFDs}
-              value={selectedCFDs}
-              onChange={() => {setSelectedCFDs(e.target.value); handleFiltering('SelectCFDs')}}
-              labelledBy="SelectCFDs"
-            />
-          </div>
+          {userStore.userRole === 'admin' || userStore.userRole === 'owner' ? 
+            <div className='dataAnaliz__filterSection__select' >
+              <label id="SelectCFDs" className="dataAnaliz__filterSection__select__label">По ЦФО</label>
+              <MultiSelect
+                className='dataAnaliz__filterSection__select__item'
+                options={CFDs}
+                value={selectedCFDs}
+                onChange={setSelectedCFDs}
+                labelledBy="SelectCFDs"
+              />
+            </div>
+          : <></>}
           <div className='dataAnaliz__filterSection__select'>
             <label id="SelectType" className="dataAnaliz__filterSection__select__label">По типу</label>
-            <Select className='dataAnaliz__filterSection__select__item' options={types} value={selectedFilterType} onChange={(e) => {console.log(e); setSelectedFilterType(e); handleFiltering('SelectType')}} isClearable={true}/>
+            <Select className='dataAnaliz__filterSection__select__item' options={types} value={selectedFilterType} onChange={setSelectedFilterType} isClearable={true}/>
           </div>
-          <div className='dataAnaliz__filterSection__select'>
-            <label id="SelectOwners" className="dataAnaliz__filterSection__select__label">По владельцу</label>
-            <MultiSelect
-            className='dataAnaliz__filterSection__select__item'
-            options={owners}
-            value={selectedOwners}
-            onChange={setSelectedOwners}
-            labelledBy="SelectOwners"
-            />
-          </div>
-          <div className='dataAnaliz__filterSection__select'>
-            <label id="SelectDate" className="dataAnaliz__filterSection__select__label">Начало</label>
-            <input type="date" className="dataAnaliz__filterSection__select__item__date" id="start" name="trip-start" onChange={(e) => setSelectedDateStart(e.target.value)}/>
-          </div>
-          <div className='dataAnaliz__filterSection__select'>
-            <label id="SelectDate" className="dataAnaliz__filterSection__select__label">Конец</label>
-            <input type="date" className="dataAnaliz__filterSection__select__item__date" id="end" name="trip-start" onChange={(e) => setSelectedDateEnd(e.target.value)}/>
-          </div>
+          {userStore.userRole === 'admin' ?
+            <div className='dataAnaliz__filterSection__select'>
+              <label id="SelectOwners" className="dataAnaliz__filterSection__select__label">По владельцу</label>
+              <MultiSelect
+              className='dataAnaliz__filterSection__select__item'
+              options={owners}
+              value={selectedOwners}
+              onChange={setSelectedOwners}
+              labelledBy="SelectOwners"
+              />
+            </div>
+          : <></>}
+          {userStore.userRole === 'admin' || userStore.userRole === 'owner' ?
+            <>
+              <div className='dataAnaliz__filterSection__select'>
+                <label id="SelectDate" className="dataAnaliz__filterSection__select__label">Начало</label>
+                <input type="date" className="dataAnaliz__filterSection__select__item__date" id="start" name="trip-start" value={selectedDateStart} onChange={(e) => {setSelectedDateStart(e.target.value); handleFiltering('SelectDateStart')}}/>
+              </div>
+              <div className='dataAnaliz__filterSection__select'>
+                <label id="SelectDate" className="dataAnaliz__filterSection__select__label">Конец</label>
+              <input type="date" disabled={selectedDateStart === null || selectedDateStart === ''} className="dataAnaliz__filterSection__select__item__date" id="end" name="trip-start" value={selectedDateEnd} onChange={(e) => {setSelectedDateEnd(e.target.value); handleFiltering('SelectDateEnd')}}/> {/*2024-08-14*/}
+              </div>
+            </>
+          : <></>}
         </div>
 
         <div className='dataAnaliz__table'>
@@ -304,7 +416,18 @@ export const DataAnaliz = (): JSX.Element => {
                     </span>
                   )}
                 </th>
-                <th scope='col'>Дата</th>
+                <th scope='col' className='hoverable' onClick={() => sorting('date_time')}>
+                  Дата
+                  {sortType === 'date_time' && (
+                    <span>
+                      <MDBIcon
+                        fas
+                        className='dataAnaliz__table__head_arrow'
+                        icon={`arrow-${order === 'asc' ? 'down' : 'up'}`}
+                      />
+                    </span>
+                  )}
+                </th>
               </tr>
             </MDBTableHead>
             {searchResults.length === 0 ? (
