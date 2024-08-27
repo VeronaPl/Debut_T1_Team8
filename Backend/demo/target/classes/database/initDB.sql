@@ -15,8 +15,8 @@ CREATE TABLE IF NOT EXISTS cfoes
     id    BIGSERIAL PRIMARY KEY ,
     cfo_name  VARCHAR(100) NOT NULL ,
     sum  INT NOT NULL ,
-    basic_sum  INT NOT NULL ,
     owner_id    BIGSERIAL ,
+    basic_sum  INT NOT NULL ,
     final_date  TIMESTAMP NOT NULL
 );
 
