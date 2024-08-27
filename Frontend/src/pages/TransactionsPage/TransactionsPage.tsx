@@ -4,7 +4,6 @@ import { LoginButton } from '../../shared';
 import { DataAnaliz } from '../../features';
 
 export const TransactionsPage = (): JSX.Element => {
-
   const [modalCreate, setModalCreate] = useState<boolean>(false);
   const [typeModal, setTypeModal] = useState<string>('');
 

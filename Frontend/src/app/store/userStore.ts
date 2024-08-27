@@ -51,7 +51,7 @@ class UserAuthorization {
     this.#sessionExpiry = expiry;
     this.money = money;
   }
-  
+
   getUserData() {
     return {
       token: this.#token,
