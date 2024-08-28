@@ -16,7 +16,8 @@ import Select from 'react-select';
 import { MDBIcon } from 'mdbreact';
 import { useNavigate } from 'react-router';
 
-export const DataAnaliz = (): JSX.Element => {
+
+export const DataAnaliz = ({needFilterSection = true}): JSX.Element => {
   // data
   const [fullData, setFullData] = useState<UserTransactionsProps[]>([...userStore.transactions]);
   // pagination
@@ -165,8 +166,8 @@ export const DataAnaliz = (): JSX.Element => {
           setFullData(
             arr.filter(
               (transaction: UserTransactionsProps) =>
-                'type' in transaction &&
-                transaction.type == 'BetweenCFDs' &&
+                'type' in transaction && 'owner' in transaction &&
+                transaction.type === 'BetweenCFDs' &&
                 (('username_sender' in transaction && transaction.username_sender in selectedCFDsArray) ||
                   ('username_recipient' in transaction && transaction.username_recipient in selectedCFDsArray) ||
                   ('id_sender' in transaction && transaction.id_sender in selectedCFDsArray) ||
@@ -345,7 +346,7 @@ export const DataAnaliz = (): JSX.Element => {
         </button>
       </form>
 
-      <div className='dataAnaliz__filterSection'>
+      { needFilterSection ? (<div className='dataAnaliz__filterSection'>
         {userStore.userRole === 'admin' || userStore.userRole === 'owner' ? (
           <div className='dataAnaliz__filterSection__select'>
             <label id='SelectCFDs' className='dataAnaliz__filterSection__select__label'>
@@ -430,7 +431,7 @@ export const DataAnaliz = (): JSX.Element => {
         ) : (
           <></>
         )}
-      </div>
+      </div>) : <></>}
 
       <div className='dataAnaliz__table'>
         <MDBTable className='MDBTable' align='middle' hover responsive>

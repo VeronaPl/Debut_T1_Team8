@@ -21,7 +21,7 @@ export const TransactionsPage = (): JSX.Element => {
           }}
         />
       </div>
-      <DataAnaliz />
+      <DataAnaliz needFilterSection={true} />
     </div>
   );
 };
