@@ -2,7 +2,7 @@ import React from 'react';
 import './ModalInput.scss';
 import { Field } from 'react-final-form';
 import Select from 'react-select';
-import { userStore } from '../../app/store/userStore';
+import { userStore } from '../../../app/store/userStore';
 
 type ModalInputProps = {
     label: string;
