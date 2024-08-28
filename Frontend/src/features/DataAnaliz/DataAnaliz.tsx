@@ -16,8 +16,7 @@ import Select from 'react-select';
 import { MDBIcon } from 'mdbreact';
 import { useNavigate } from 'react-router';
 
-
-export const DataAnaliz = ({needFilterSection = true}): JSX.Element => {
+export const DataAnaliz = ({ needFilterSection = true }): JSX.Element => {
   // data
   const [fullData, setFullData] = useState<UserTransactionsProps[]>([...userStore.transactions]);
   // pagination
@@ -54,7 +53,24 @@ export const DataAnaliz = ({needFilterSection = true}): JSX.Element => {
 
   useEffect(() => {
     setTotalPages(Math.ceil(fullData.length / itemsPerPage));
-  }, [fullData, itemsPerPage, searchValue, selectedFilterType, selectedDateStart, selectedDateEnd, selectedOwners, selectedCFDs]);
+  }, [
+    fullData,
+    itemsPerPage,
+    searchValue,
+    selectedFilterType,
+    selectedDateStart,
+    selectedDateEnd,
+    selectedOwners,
+    selectedCFDs
+  ]);
+
+  useEffect(() => {
+    if (sessionStorage.getItem('currentPage')) {
+      setCurrentPage(Number(sessionStorage.getItem('currentPage')));
+    } else {
+      sessionStorage.setItem('currentPage', currentPage);
+    }
+  }, [currentPage]);
 
   useEffect(() => {
     getFilteringOptionsCFDs();
@@ -91,6 +107,7 @@ export const DataAnaliz = ({needFilterSection = true}): JSX.Element => {
         setFullData(sorted);
         setOrder('desc');
         setCurrentPage(0);
+        sessionStorage.setItem('currentPage', 0);
       } else {
         const sorted = [...fullData].sort((a, b) =>
           a[col].toString().toLowerCase() > b[col].toString().toLowerCase() ? -1 : 1
@@ -98,6 +115,7 @@ export const DataAnaliz = ({needFilterSection = true}): JSX.Element => {
         setFullData(sorted);
         setOrder('asc');
         setCurrentPage(0);
+        sessionStorage.setItem('currentPage', 0);
       }
       setSortType(col);
     } else {
@@ -110,6 +128,7 @@ export const DataAnaliz = ({needFilterSection = true}): JSX.Element => {
         setFullData(sorted);
         setOrder('desc');
         setCurrentPage(0);
+        sessionStorage.setItem('currentPage', 0);
       } else {
         const sorted = [...fullData].sort((a, b) => {
           const dateA = a[col].split('.').reverse().join('-');
@@ -119,6 +138,7 @@ export const DataAnaliz = ({needFilterSection = true}): JSX.Element => {
         setFullData(sorted);
         setOrder('asc');
         setCurrentPage(0);
+        sessionStorage.setItem('currentPage', 0);
       }
       setSortType(col);
     }
@@ -131,6 +151,7 @@ export const DataAnaliz = ({needFilterSection = true}): JSX.Element => {
 
     if (search !== '') {
       setCurrentPage(0);
+      sessionStorage.setItem('currentPage', 0);
       setFullData(
         arr.filter(
           (transaction: UserTransactionsProps) =>
@@ -144,6 +165,7 @@ export const DataAnaliz = ({needFilterSection = true}): JSX.Element => {
       );
     } else {
       setCurrentPage(0);
+      sessionStorage.setItem('currentPage', 0);
       setFullData([...userStore.transactions]);
       setSelectedCFDs([]);
       setSelectedOwners([]);
@@ -155,6 +177,7 @@ export const DataAnaliz = ({needFilterSection = true}): JSX.Element => {
 
   const handleFiltering = (filterType: string) => {
     setCurrentPage(0);
+    sessionStorage.setItem('currentPage', 0);
     const arr = [...userStore.transactions];
 
     switch (filterType) {
@@ -166,7 +189,8 @@ export const DataAnaliz = ({needFilterSection = true}): JSX.Element => {
           setFullData(
             arr.filter(
               (transaction: UserTransactionsProps) =>
-                'type' in transaction && 'owner' in transaction &&
+                'type' in transaction &&
+                'owner' in transaction &&
                 transaction.type === 'BetweenCFDs' &&
                 (('username_sender' in transaction && transaction.username_sender in selectedCFDsArray) ||
                   ('username_recipient' in transaction && transaction.username_recipient in selectedCFDsArray) ||
@@ -189,6 +213,7 @@ export const DataAnaliz = ({needFilterSection = true}): JSX.Element => {
         break;
       case 'SelectOwners':
         setCurrentPage(0);
+        sessionStorage.setItem('currentPage', 0);
         if (selectedOwners.length === 0) {
           setFullData([...userStore.transactions]);
         } else {
@@ -206,9 +231,11 @@ export const DataAnaliz = ({needFilterSection = true}): JSX.Element => {
       case 'SelectDateStart':
         if (selectedDateStart === '') {
           setCurrentPage(0);
+          sessionStorage.setItem('currentPage', 0);
           setFullData([...userStore.transactions]);
         } else {
           setCurrentPage(0);
+          sessionStorage.setItem('currentPage', 0);
           if (selectedDateEnd === '') {
             setFullData(
               arr.filter(
@@ -232,9 +259,11 @@ export const DataAnaliz = ({needFilterSection = true}): JSX.Element => {
       case 'SelectDateEnd':
         if (selectedDateEnd === '') {
           setCurrentPage(0);
+          sessionStorage.setItem('currentPage', 0);
           setFullData([...userStore.transactions]);
         } else {
           setCurrentPage(0);
+          sessionStorage.setItem('currentPage', 0);
           if (selectedDateStart === '') {
             setFullData(
               arr.filter(
@@ -276,12 +305,26 @@ export const DataAnaliz = ({needFilterSection = true}): JSX.Element => {
           <>
             <MDBPaginationItem disabled>
               <MDBPaginationLink>
-                <MDBIcon fas icon='angle-double-left' onClick={() => setCurrentPage(0)} />
+                <MDBIcon
+                  fas
+                  icon='angle-double-left'
+                  onClick={() => {
+                    setCurrentPage(0);
+                    sessionStorage.setItem('currentPage', 0);
+                  }}
+                />
               </MDBPaginationLink>
             </MDBPaginationItem>
             <MDBPaginationItem disabled>
               <MDBPaginationLink>
-                <MDBIcon fas icon='angle-left' onClick={() => setCurrentPage(currentPage - 1)} />
+                <MDBIcon
+                  fas
+                  icon='angle-left'
+                  onClick={() => {
+                    setCurrentPage(currentPage - 1);
+                    sessionStorage.setItem('currentPage', currentPage - 1);
+                  }}
+                />
               </MDBPaginationLink>
             </MDBPaginationItem>
           </>
@@ -289,12 +332,26 @@ export const DataAnaliz = ({needFilterSection = true}): JSX.Element => {
           <>
             <MDBPaginationItem>
               <MDBPaginationLink>
-                <MDBIcon fas icon='angle-double-left' onClick={() => setCurrentPage(0)} />
+                <MDBIcon
+                  fas
+                  icon='angle-double-left'
+                  onClick={() => {
+                    setCurrentPage(0);
+                    sessionStorage.setItem('currentPage', 0);
+                  }}
+                />
               </MDBPaginationLink>
             </MDBPaginationItem>
             <MDBPaginationItem>
               <MDBPaginationLink>
-                <MDBIcon fas icon='angle-left' onClick={() => setCurrentPage(currentPage - 1)} />
+                <MDBIcon
+                  fas
+                  icon='angle-left'
+                  onClick={() => {
+                    setCurrentPage(currentPage - 1);
+                    sessionStorage.setItem('currentPage', currentPage - 1);
+                  }}
+                />
               </MDBPaginationLink>
             </MDBPaginationItem>
           </>
@@ -304,12 +361,26 @@ export const DataAnaliz = ({needFilterSection = true}): JSX.Element => {
           <>
             <MDBPaginationItem disabled>
               <MDBPaginationLink>
-                <MDBIcon fas icon='angle-right' onClick={() => setCurrentPage(currentPage + 1)} />
+                <MDBIcon
+                  fas
+                  icon='angle-right'
+                  onClick={() => {
+                    setCurrentPage(currentPage + 1);
+                    sessionStorage.setItem('currentPage', currentPage + 1);
+                  }}
+                />
               </MDBPaginationLink>
             </MDBPaginationItem>
             <MDBPaginationItem disabled>
               <MDBPaginationLink>
-                <MDBIcon fas icon='angle-double-right' onClick={() => setCurrentPage(totalPages - 1)} />
+                <MDBIcon
+                  fas
+                  icon='angle-double-right'
+                  onClick={() => {
+                    setCurrentPage(totalPages - 1);
+                    sessionStorage.setItem('currentPage', totalPages - 1);
+                  }}
+                />
               </MDBPaginationLink>
             </MDBPaginationItem>
           </>
@@ -317,12 +388,26 @@ export const DataAnaliz = ({needFilterSection = true}): JSX.Element => {
           <>
             <MDBPaginationItem>
               <MDBPaginationLink>
-                <MDBIcon fas icon='angle-right' onClick={() => setCurrentPage(currentPage + 1)} />
+                <MDBIcon
+                  fas
+                  icon='angle-right'
+                  onClick={() => {
+                    setCurrentPage(currentPage + 1);
+                    sessionStorage.setItem('currentPage', currentPage + 1);
+                  }}
+                />
               </MDBPaginationLink>
             </MDBPaginationItem>
             <MDBPaginationItem>
               <MDBPaginationLink>
-                <MDBIcon fas icon='angle-double-right' onClick={() => setCurrentPage(totalPages - 1)} />
+                <MDBIcon
+                  fas
+                  icon='angle-double-right'
+                  onClick={() => {
+                    setCurrentPage(totalPages - 1);
+                    sessionStorage.setItem('currentPage', totalPages - 1);
+                  }}
+                />
               </MDBPaginationLink>
             </MDBPaginationItem>
           </>
@@ -346,92 +431,99 @@ export const DataAnaliz = ({needFilterSection = true}): JSX.Element => {
         </button>
       </form>
 
-      { needFilterSection ? (<div className='dataAnaliz__filterSection'>
-        {userStore.userRole === 'admin' || userStore.userRole === 'owner' ? (
-          <div className='dataAnaliz__filterSection__select'>
-            <label id='SelectCFDs' className='dataAnaliz__filterSection__select__label'>
-              По ЦФО
-            </label>
-            <MultiSelect
-              className='dataAnaliz__filterSection__select__item'
-              options={CFDs}
-              value={selectedCFDs}
-              onChange={(e) => {setSelectedCFDs(e); handleFiltering('SelectCFDs')}}
-              labelledBy='SelectCFDs'
-            />
-          </div>
-        ) : (
-          <></>
-        )}
-        <div className='dataAnaliz__filterSection__select'>
-          <label id='SelectType' className='dataAnaliz__filterSection__select__label'>
-            По типу
-          </label>
-          <Select
-            className='dataAnaliz__filterSection__select__item'
-            options={types}
-            value={selectedFilterType}
-            onChange={setSelectedFilterType}
-            isClearable={true}
-          />
-        </div>
-        {userStore.userRole === 'admin' ? (
-          <div className='dataAnaliz__filterSection__select'>
-            <label id='SelectOwners' className='dataAnaliz__filterSection__select__label'>
-              По владельцу
-            </label>
-            <MultiSelect
-              className='dataAnaliz__filterSection__select__item'
-              options={owners}
-              value={selectedOwners}
-              onChange={setSelectedOwners}
-              labelledBy='SelectOwners'
-            />
-          </div>
-        ) : (
-          <></>
-        )}
-        {userStore.userRole === 'admin' || userStore.userRole === 'owner' ? (
-          <>
+      {needFilterSection ? (
+        <div className='dataAnaliz__filterSection'>
+          {userStore.userRole === 'admin' || userStore.userRole === 'owner' ? (
             <div className='dataAnaliz__filterSection__select'>
-              <label id='SelectDate' className='dataAnaliz__filterSection__select__label'>
-                Начало
+              <label id='SelectCFDs' className='dataAnaliz__filterSection__select__label'>
+                По ЦФО
               </label>
-              <input
-                type='date'
-                className='dataAnaliz__filterSection__select__item__date'
-                id='start'
-                name='trip-start'
-                value={selectedDateStart}
+              <MultiSelect
+                className='dataAnaliz__filterSection__select__item'
+                options={CFDs}
+                value={selectedCFDs}
                 onChange={(e) => {
-                  setSelectedDateStart(e.target.value);
-                  handleFiltering('SelectDateStart');
+                  setSelectedCFDs(e);
+                  handleFiltering('SelectCFDs');
                 }}
+                labelledBy='SelectCFDs'
               />
             </div>
+          ) : (
+            <></>
+          )}
+          <div className='dataAnaliz__filterSection__select'>
+            <label id='SelectType' className='dataAnaliz__filterSection__select__label'>
+              По типу
+            </label>
+            <Select
+              className='dataAnaliz__filterSection__select__item'
+              options={types}
+              value={selectedFilterType}
+              onChange={setSelectedFilterType}
+              isClearable={true}
+            />
+          </div>
+          {userStore.userRole === 'admin' ? (
             <div className='dataAnaliz__filterSection__select'>
-              <label id='SelectDate' className='dataAnaliz__filterSection__select__label'>
-                Конец
+              <label id='SelectOwners' className='dataAnaliz__filterSection__select__label'>
+                По владельцу
               </label>
-              <input
-                type='date'
-                disabled={selectedDateStart === null || selectedDateStart === ''}
-                className='dataAnaliz__filterSection__select__item__date'
-                id='end'
-                name='trip-start'
-                value={selectedDateEnd}
-                onChange={(e) => {
-                  setSelectedDateEnd(e.target.value);
-                  handleFiltering('SelectDateEnd');
-                }}
-              />{' '}
-              {/*2024-08-14*/}
+              <MultiSelect
+                className='dataAnaliz__filterSection__select__item'
+                options={owners}
+                value={selectedOwners}
+                onChange={setSelectedOwners}
+                labelledBy='SelectOwners'
+              />
             </div>
-          </>
-        ) : (
-          <></>
-        )}
-      </div>) : <></>}
+          ) : (
+            <></>
+          )}
+          {userStore.userRole === 'admin' || userStore.userRole === 'owner' ? (
+            <>
+              <div className='dataAnaliz__filterSection__select'>
+                <label id='SelectDate' className='dataAnaliz__filterSection__select__label'>
+                  Начало
+                </label>
+                <input
+                  type='date'
+                  className='dataAnaliz__filterSection__select__item__date'
+                  id='start'
+                  name='trip-start'
+                  value={selectedDateStart}
+                  onChange={(e) => {
+                    setSelectedDateStart(e.target.value);
+                    handleFiltering('SelectDateStart');
+                  }}
+                />
+              </div>
+              <div className='dataAnaliz__filterSection__select'>
+                <label id='SelectDate' className='dataAnaliz__filterSection__select__label'>
+                  Конец
+                </label>
+                <input
+                  type='date'
+                  disabled={selectedDateStart === null || selectedDateStart === ''}
+                  className='dataAnaliz__filterSection__select__item__date'
+                  id='end'
+                  name='trip-start'
+                  value={selectedDateEnd}
+                  onChange={(e) => {
+                    setSelectedDateEnd(e.target.value);
+                    handleFiltering('SelectDateEnd');
+                  }}
+                />{' '}
+                {/*2024-08-14*/}
+              </div>
+            </>
+          ) : (
+            <></>
+          )}
+        </div>
+      ) : (
+        <></>
+      )}
 
       <div className='dataAnaliz__table'>
         <MDBTable className='MDBTable' align='middle' hover responsive>
