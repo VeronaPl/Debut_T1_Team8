@@ -33,7 +33,7 @@ export const getData = async (setLoading: () => void): Promise<void> => {
   })
     .then((res) => res.json())
     .then((data) => {
-      userStore.setUserUsers(data);
+      userStore.setUserCFDs(data);
       if (userStore.userRole !== 'admin') {
         setLoading();
       }
