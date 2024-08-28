@@ -25,29 +25,43 @@ export const ModalCreate = ({ modalWindow, setModalWindow, title, typeModal }: M
                 {
                     typeModal === 'transaction'
                         ? <>
+                        <div className="ModalCreate__content__item">
                             <label id='CFDTransaction' className='dataAnaliz__filterSection__select__label'>
                                 Введите название ЦФО
                             </label>
                             <Select
-                                className='dataAnaliz__filterSection__select__item'
+                                className='dataAnaliz__filterSection__select__item custom-select'
                                 options={[...userStore.CFDs]}
                                 value={selectedCFD}
                                 onChange={(e) => setSelectedCFD(e)}
                                 isClearable={true}
                                 
                             />
-
+                        </div>
+                        <div className="ModalCreate__content__item">
                             <label id="summi" className='dataAnaliz__filterSection__select__label'>
                                 Введите сумму
                             </label>
                             <input
                                 type='number'
                                 className='dataAnaliz__filterSection__select__item'
-                                id='summi'
-                                name='trip-start'
+                                name='summi'
                                 value={selectedSum}
                                 onChange={(e) => setSelectedSum(Number(e.target.value))}
                             />
+                        </div>
+                        <div className="ModalCreate__content__item">
+                            <label id="reason" className='dataAnaliz__filterSection__select__label'>
+                                Причина перевода
+                            </label>
+                            <input
+                                type='text'
+                                className='dataAnaliz__filterSection__select__item'
+                                name='reason'
+                                value={selectedReason}
+                                onChange={(e) => setSelectedReason(e.target.value)}
+                            />
+                        </div>
                         </>
                     : typeModal === 'cfds'
                         ? <></>
