@@ -45,32 +45,6 @@ public class AdminController {
 
     // Администратор
 
-    @Operation(summary = "Просмотр истории операций", security = {@SecurityRequirement(name = "bearer-key")})
-    @GetMapping("/transactions")
-    public ResponseEntity<List<TransactionReq>> transactions() {
-        if (isNotAdmin()){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
-        List<Transaction> transactions = transactionService.getAll();
-
-        return transactions != null &&  !transactions.isEmpty()
-                ? new ResponseEntity<>(transactions.stream().map(t -> new TransactionReq(t, cfoService, personService, allidService)).collect(Collectors.toList()), HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-    @Operation(summary = "Просмотр истории операций - без участия админа", security = {@SecurityRequirement(name = "bearer-key")})
-    @GetMapping("/transactionsWithoutAdmin")
-    public ResponseEntity<List<TransactionReq>> transactionsWithoutAdmin() {
-        if (isNotAdmin()){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
-        List<Transaction> transactions = transactionService.getAll().stream().filter(t -> t.getTFrom() != 1L).toList();
-
-        return  !transactions.isEmpty()
-                ? new ResponseEntity<>(transactions.stream().map(t -> new TransactionReq(t, cfoService, personService, allidService)).collect(Collectors.toList()), HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
     @Operation(summary = "Просмотр списка цфо", security = {@SecurityRequirement(name = "bearer-key")})
     @GetMapping("/cfoes")
     public ResponseEntity<List<CFOSumReq>> cfoes() {
@@ -252,68 +226,6 @@ public class AdminController {
         cfoService.update(cfo.getId(), cfo);
         return new ResponseEntity<>(new CFOSumReq(cfo, personService, allidService), HttpStatus.OK);
     }
-
-    /*
-    @Operation(summary = "Пополнение бюджета пользователя по Id", security = {@SecurityRequirement(name = "bearer-key")})
-    @PostMapping("/adminToPersonByID")
-    public ResponseEntity<TransactionReq> adminToPersonByID(Long AllpersId, Integer s, String comment) {
-        if (isNotAdmin()){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        Long persId = allidService.getTableId(AllpersId);
-        Person pers = personService.getById(persId);
-
-        if (pers == null ){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        if ( s <= 0){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        pers.setSum(pers.getSum() + s);
-        personService.update(pers.getId(), pers);
-
-        Transaction tran = new Transaction();
-        tran.setDatatime(new Date());
-        tran.setTFrom(1L);
-        tran.setTTo(persId);
-        tran.setOwner(0L);
-        tran.setComment(comment);
-        tran.setType("adminToPerson");
-        tran.setSum(s);
-        transactionService.create(tran);
-        return new ResponseEntity<>(new TransactionReq(tran, cfoService, personService), HttpStatus.OK);
-    }
-
-    @Operation(summary = "Пополнение бюджета пользователя по логину", security = {@SecurityRequirement(name = "bearer-key")})
-    @PostMapping("/adminToPersonByLog")
-    public ResponseEntity<TransactionReq> adminToPersonByLog(String login, Integer s, String comment) {
-        if (isNotAdmin()){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
-        boolean persIs = personService.getAll().stream().anyMatch(p -> Objects.equals(p.getLogin(), login));
-        if (!persIs){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        if (s <= 0){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        Person pers = personService.getAll().stream().filter(p -> Objects.equals(p.getLogin(), login)).findFirst().get();
-
-        pers.setSum(pers.getSum() + s);
-        personService.update(pers.getId(), pers);
-
-        Transaction tran = new Transaction();
-        tran.setDatatime(new Date());
-        tran.setTFrom(1L);
-        tran.setTTo(pers.getId());
-        tran.setOwner(0L);
-        tran.setComment(comment);
-        tran.setType("adminToPerson");
-        tran.setSum(s);
-        transactionService.create(tran);
-        return new ResponseEntity<>(new TransactionReq(tran, cfoService, personService), HttpStatus.OK);
-    }   */
 
     @Operation(summary = "Удаление пользователя (владельца) по Id", security = {@SecurityRequirement(name = "bearer-key")})
     @DeleteMapping("/deletePersonByID")
