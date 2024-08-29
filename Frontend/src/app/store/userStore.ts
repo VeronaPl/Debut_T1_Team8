@@ -27,17 +27,16 @@ export interface CFDsProps {
 }
 
 class UserAuthorization {
-  #token =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzI0OTIxMDkyLCJleHAiOjE3MjQ5MjIyOTJ9.3kqK-oaf7RzOiSWYp0BNZ9BMKympPVnVKIThFLwjcw0';
-  #userId = '';
-  firstName = '';
-  lastName = '';
-  averageName = '';
-  userName = 'username';
-  userRole = 'admin'; // admin / owner / user
-  #sessionExpiry = 20; // Время через которое заканчивается сессия пользователя
-  isAuth = true;
-  money = 50;
+  #token: string = '';
+  #userId: string = '';
+  firstName: string = '';
+  lastName: string = '';
+  averageName: string = '';
+  userName: string = 'username';
+  userRole: string = 'admin'; // admin / owner / user
+  #sessionExpiry: number = 20; // Время через которое заканчивается сессия пользователя
+  isAuth: boolean = true;
+  money: number = 50;
   transactions: UserTransactionsProps[] = [];
   owners: CFDsProps[] = [];
   CFDs: CFDsProps[] = [];

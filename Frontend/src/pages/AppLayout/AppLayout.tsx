@@ -23,8 +23,8 @@ export const AppLayout = observer((): JSX.Element => {
   }
 
   useEffect(() => {
-    // getData(() => setLoading(false));
-    authorization({ login: 'admin', password: '12345' });
+    getData(() => setLoading(false));
+    // authorization({ login: 'admin', password: '12345', setLoading: () => setLoading(false) });
   }, [loading]);
 
   return (

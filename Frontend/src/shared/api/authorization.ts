@@ -3,35 +3,25 @@ import { userStore } from '../../app/store/userStore';
 export interface LoginProps {
   login: string;
   password: string;
+  // setLoading: () => void;
 }
 
-export const authorization = async ({ login = '', password = '' }: LoginProps): Promise<void> => {
-  await fetch('http://localhost:8080/login', {
+export const authorization = async ({ login, password, setLoading }: LoginProps) => {
+  await fetch(`http://localhost:8080/login?login=${login}&password=${password}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Controls-Accept': '*/*'
     },
-    body: JSON.stringify({ login: login, password: password })
+    body: JSON.stringify({ login, password })
   })
-    .then((res) => res.json())
+    .then((res) => console.log(res))
     .then((data) => {
+      console.log(data);
       userStore.setUserToken(data);
+      setLoading();
     })
     .catch((err) => {
-      fetch('http://localhost:8080/newToken', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Controls-Accept': '*/*'
-        }
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          userStore.setUserToken(data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      console.log(err);
     });
 };
