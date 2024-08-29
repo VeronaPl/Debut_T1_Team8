@@ -65,7 +65,7 @@ public class UniteController {
     @GetMapping("/personByID")
     public ResponseEntity<PersonReq> personByID(Long AllId) {
 
-        Person pers = personService.getById(allidService.getTableId(AllId));
+        Person pers = personService.getById(allidService.getTableIdType(AllId, "person"));
         if (pers == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -98,7 +98,7 @@ public class UniteController {
     @Operation(summary = "Просмотр цфо")
     @GetMapping("/cfoName")
     public ResponseEntity<CFOReq> cfoName(Long AllId) {
-        CFO cfo = cfoService.getById(allidService.getTableId(AllId));
+        CFO cfo = cfoService.getById(allidService.getTableIdType(AllId, "cfo"));
 
         return cfo != null
                 ? new ResponseEntity<>(new CFOReq(cfo, allidService), HttpStatus.OK)
