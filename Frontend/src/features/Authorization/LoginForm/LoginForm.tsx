@@ -32,7 +32,7 @@ const validate = (values: FormValues) => {
 export const LoginForm = (): JSX.Element => {
   const onSubmit = async (values: FormValues) => {
     try {
-      await authorization({ login: values.username, password: values.password, setLoading: () => {} });
+      await authorization({ login: values.username, password: values.password, type: 'login' });
     } catch (error) {
       router('/register');
     }

@@ -3,11 +3,12 @@ import { userStore } from '../../app/store/userStore';
 export interface LoginProps {
   login: string;
   password: string;
+  type: "login" | "register";
 }
 
-export const authorization = async ({ login, password }: LoginProps) => {
+export const authorization = async ({ login, password, type }: LoginProps) => {
 
-  await fetch(`http://localhost:8080/login?login=${login}&password=${password}`, {
+  await fetch(`http://localhost:8080/${type}?login=${login}&password=${password}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -17,7 +18,7 @@ export const authorization = async ({ login, password }: LoginProps) => {
   })
     .then((res) => {
       if (res.status === 403) {
-        alert('Пользователя нет в системе');
+        alert('Неправильный логин или пароль');
       }
       return res.json()
     })

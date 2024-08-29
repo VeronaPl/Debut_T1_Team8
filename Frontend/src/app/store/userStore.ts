@@ -2,14 +2,14 @@ import { makeAutoObservable } from 'mobx';
 
 export interface UserTransactionsProps {
   id: number;
-  id_sender: string;
-  username_sender: string;
-  id_recipient: string;
-  username_recipient: string;
-  type: string;
-  owner?: string;
+  from: string;
+  to: string;
   sum: number;
-  date_time: string;
+  type: string;
+  comment: string;
+  datatime: Date;
+  id_cfo_from: number | null;
+  id_cfo_to: number | null;
 }
 
 export interface OwnerProps {
