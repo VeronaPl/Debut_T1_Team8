@@ -23,11 +23,13 @@ export const AppLayout = observer((): JSX.Element => {
   }
 
   useEffect(() => {
-    if (userStore.isAuth) {
+    if (localStorage.getItem('token')) {
+      userStore.setUserToken(localStorage.getItem('token'));
+      userStore.setUserAuth(true);
       getData(() => setLoading(false));
     }
     // authorization({ login: 'admin', password: '12345', setLoading: () => setLoading(false) });
-  }, [loading]);
+  }, [loading, userStore.isAuth]);
 
   return (
     <div className='layout-wrap'>

@@ -106,9 +106,6 @@ class UserAuthorization {
   // метод для установки статуса авторизации
   setUserAuth(isAuth: boolean) {
     this.isAuth = isAuth;
-    setTimeout(() => {
-      console.log(`Auth is ${isAuth}`);
-    }, 100);
   }
 
   // Вызывать при истечении срока сессии

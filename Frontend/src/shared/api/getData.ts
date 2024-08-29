@@ -4,7 +4,8 @@ export const getData = async (setLoading: () => void): Promise<void> => {
   await fetch('http://localhost:8080/profile', {
     method: 'GET',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${userStore.getUserToken()}`
     }
   })
     .then((res) => res.json())

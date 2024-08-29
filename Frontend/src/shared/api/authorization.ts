@@ -3,10 +3,9 @@ import { userStore } from '../../app/store/userStore';
 export interface LoginProps {
   login: string;
   password: string;
-  // setLoading: () => void;
 }
 
-export const authorization = async ({ login, password, setLoading }: LoginProps) => {
+export const authorization = async ({ login, password }: LoginProps) => {
 
   await fetch(`http://localhost:8080/login?login=${login}&password=${password}`, {
     method: 'POST',
@@ -24,7 +23,8 @@ export const authorization = async ({ login, password, setLoading }: LoginProps)
     })
     .then((data) => {
       userStore.setUserToken(data.token);
-      userStore.setUserAuth(data.token ? true : false);
+      localStorage.setItem('token', data.token);
+      userStore.setUserAuth(userStore.getUserToken() ? true : false);
     })
     .catch((err) => {
       console.log(err);
