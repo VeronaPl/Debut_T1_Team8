@@ -3,6 +3,7 @@ package com.example.demo.Controllers;
 import com.example.demo.BDData.Person;
 import com.example.demo.BDData.Transaction;
 import com.example.demo.Config.Sha256;
+import com.example.demo.DataReq.PersonSumReq;
 import com.example.demo.DataReq.TransactionReq;
 import com.example.demo.RoutingDataReq.UserObjectReq;
 import com.example.demo.Service.*;
@@ -23,6 +24,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Tag(name="Контроллер пользователя")
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 public class UserController {
     @Autowired
@@ -43,7 +45,7 @@ public class UserController {
     // Функции доступные пользователю и владельцу
     @Operation(summary = "Удаление пользователя (себя)", security = {@SecurityRequirement(name = "bearer-key")})
     @DeleteMapping("/deletePerson")
-    public ResponseEntity<String> deletePerson() {
+    public ResponseEntity<Void> deletePerson() {
         Person pers = loginOfUserOrOwner();
         if (pers == null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -51,7 +53,7 @@ public class UserController {
 
         personService.delete(pers.getId());
 
-        return new ResponseEntity<>("remotely", HttpStatus.OK);
+        return new ResponseEntity<>( HttpStatus.OK);
     }
 
     @Operation(summary = "Перевод пользователю по логину", security = {@SecurityRequirement(name = "bearer-key")})
@@ -153,7 +155,7 @@ public class UserController {
 
     @Operation(summary = "Поменять ФИО", security = {@SecurityRequirement(name = "bearer-key")})
     @PutMapping("/newName")
-    public ResponseEntity<String> newFioNik(String firstName, String averageName, String lastName) {
+    public ResponseEntity<PersonSumReq> newFioNik(String firstName, String averageName, String lastName) {
         Person pers = loginOfUserOrOwner();
         if (pers == null || firstName == null || averageName == null || lastName == null ||
                 firstName.isEmpty() || averageName.isEmpty()  || lastName.isEmpty()){
@@ -166,30 +168,8 @@ public class UserController {
 
         personService.update(pers.getId(), pers);
 
-        return new ResponseEntity<>("update", HttpStatus.OK);
+        return new ResponseEntity<>(new PersonSumReq(pers, allidService), HttpStatus.OK);
     }
-
-    /*
-    @Operation(summary = "Поменять пароль", security = {@SecurityRequirement(name = "bearer-key")})
-    @PutMapping("/newPass")
-    public ResponseEntity<String> newPass(String old_password, String password) {
-        Person pers = loginOfUserOrOwner();
-        if (pers == null || password == null || password.isEmpty()){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        String old_hashPass = Sha256.sha256(old_password);
-        String hashPass = Sha256.sha256(password);
-        if (!Objects.equals(old_hashPass, pers.getPassword())){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        pers.setPassword(hashPass);
-
-        personService.update(pers.getId(), pers);
-
-        return new ResponseEntity<>("new pass", HttpStatus.OK);
-    }
-
-     */
 
 
     @Operation(summary = "Просмотр транзакций пользователя", security = {@SecurityRequirement(name = "bearer-key")})

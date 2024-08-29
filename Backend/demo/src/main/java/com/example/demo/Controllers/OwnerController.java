@@ -30,6 +30,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Tag(name="Контроллер владельца")
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 public class OwnerController {
     @Autowired
