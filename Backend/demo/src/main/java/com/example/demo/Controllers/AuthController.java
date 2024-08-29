@@ -2,6 +2,7 @@ package com.example.demo.Controllers;
 
 import com.example.demo.BDData.ALLID;
 import com.example.demo.BDData.Person;
+import com.example.demo.DataReq.JWTReq;
 import com.example.demo.DataReq.PersonSumReq;
 import com.example.demo.Config.Sha256;
 import com.example.demo.Service.ALLIDService;
@@ -38,18 +39,18 @@ public class AuthController {
 
     @Operation(summary = "Получить токен (действителен 20 минут)")
     @PostMapping("/login")
-    public ResponseEntity<String> login(String login, String password) {
+    public ResponseEntity<JWTReq> login(String login, String password) {
         final String accessToken = authService.login(login, Sha256.sha256(password) );
 
-        return new ResponseEntity<>(accessToken, HttpStatus.OK);
+        return new ResponseEntity<>(new JWTReq(accessToken), HttpStatus.OK);
     }
 
     @Operation(summary = "Получить обновленный токен (действителен 20 минут)", security = {@SecurityRequirement(name = "bearer-key")})
     @PostMapping("/newToken")
-    public ResponseEntity<String> newToken() {
+    public ResponseEntity<JWTReq> newToken() {
         final String accessToken = authService.newToken();
 
-        return new ResponseEntity<>(accessToken, HttpStatus.OK);
+        return new ResponseEntity<>(new JWTReq(accessToken), HttpStatus.OK);
     }
 
     @Operation(summary = "Просмотр своего аккаунта", security = {@SecurityRequirement(name = "bearer-key")})
@@ -70,7 +71,7 @@ public class AuthController {
 
     @Operation(summary = "Регистрация пользователя (возврашает токен для входа)")
     @PostMapping("/registration")
-    public ResponseEntity<String> registration(String login, String password) {
+    public ResponseEntity<JWTReq> registration(String login, String password) {
         boolean persIs = personService.getAll().stream().anyMatch(p -> Objects.equals(p.getLogin(), login));
         if (persIs){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -90,7 +91,7 @@ public class AuthController {
         allidService.create(allid);
 
         final String accessToken = authService.login(login, hashPass);
-        return new ResponseEntity<>(accessToken, HttpStatus.OK);
+        return new ResponseEntity<>(new JWTReq(accessToken), HttpStatus.OK);
     }
 
 }
