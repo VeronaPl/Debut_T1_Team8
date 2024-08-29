@@ -230,7 +230,7 @@ public class AdminController {
 
     @Operation(summary = "Удаление пользователя (владельца) по Id", security = {@SecurityRequirement(name = "bearer-key")})
     @DeleteMapping("/deletePersonByID")
-    public ResponseEntity<String> deletePersonByID(Long AllId) {
+    public ResponseEntity<Void> deletePersonByID(Long AllId) {
         if (isNotAdmin()){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -243,12 +243,12 @@ public class AdminController {
         }
         personService.delete(Id);
 
-        return new ResponseEntity<>("remotely", HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Operation(summary = "Удаление пользователя (владельца) по Логину", security = {@SecurityRequirement(name = "bearer-key")})
     @DeleteMapping("/deletePersonByLog")
-    public ResponseEntity<String> deletePersonByLog(String login) {
+    public ResponseEntity<Void> deletePersonByLog(String login) {
         if (isNotAdmin()){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -262,12 +262,12 @@ public class AdminController {
 
         personService.delete(pers.getId());
 
-        return new ResponseEntity<>("remotely", HttpStatus.OK);
+        return new ResponseEntity<>( HttpStatus.OK);
     }
 
     @Operation(summary = "Удаление ЦФО", security = {@SecurityRequirement(name = "bearer-key")})
     @DeleteMapping("/deleteCFO")
-    public ResponseEntity<String> deleteCFO(Long AllId) {
+    public ResponseEntity<Void> deleteCFO(Long AllId) {
         if (isNotAdmin()){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -279,7 +279,7 @@ public class AdminController {
 
         cfoService.delete(Id);
 
-        return new ResponseEntity<>("remotely", HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Operation(summary = "Поменять роль пользователя по Id", security = {@SecurityRequirement(name = "bearer-key")})
