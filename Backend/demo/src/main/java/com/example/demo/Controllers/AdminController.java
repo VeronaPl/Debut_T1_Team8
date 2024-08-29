@@ -29,6 +29,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Tag(name="Контроллер Администатора")
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 public class AdminController {
     @Autowired
