@@ -23,7 +23,9 @@ export const AppLayout = observer((): JSX.Element => {
   }
 
   useEffect(() => {
-    getData(() => setLoading(false));
+    if (userStore.isAuth) {
+      getData(() => setLoading(false));
+    }
     // authorization({ login: 'admin', password: '12345', setLoading: () => setLoading(false) });
   }, [loading]);
 

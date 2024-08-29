@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router';
 import { FormInput } from '../../../shared/ui/FormInput';
 import { LoginButton } from '../../../shared/ui/buttons/Login';
 import { userStore } from '../../../app/store/userStore';
+import { authorization, getData } from '../../../shared/api';
 
 export interface FormValues {
   username: string;
@@ -15,21 +16,26 @@ const validate = (values: FormValues) => {
   const errors: Partial<FormValues> = {};
   if (!values.username) {
     errors.username = '* Ник обязателен';
-  } else if (!/^(?=.{6,20}$)(?![_.])[a-zA-Z0-9._]+(?<![_.])$/.test(values.username)) {
+  } else if (!/^(?=.{5,20}$)(?![_.])[a-zA-Z0-9._]+(?<![_.])$/.test(values.username)) {
     errors.username = '* Неверный формат ника';
   }
   if (!values.password) {
     errors.password = '* Пароль обязателен';
-  } else if (values.password.length < 6) {
-    errors.password = '* Пароль должен быть не менее 6 символов';
+  } else if (values.password.length < 5) {
+    errors.password = '* Пароль должен быть не менее 5 символов';
   }
   return errors;
 };
 
+
+
 export const LoginForm = (): JSX.Element => {
   const onSubmit = async (values: FormValues) => {
-    console.log('Form values:', values);
-    userStore.setUserAuth(true);
+    try {
+      await authorization({ login: values.username, password: values.password, setLoading: () => {} });
+    } catch (error) {
+      router('/register');
+    }
   };
 
   const router = useNavigate();

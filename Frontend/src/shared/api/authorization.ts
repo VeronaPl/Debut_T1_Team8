@@ -7,6 +7,7 @@ export interface LoginProps {
 }
 
 export const authorization = async ({ login, password, setLoading }: LoginProps) => {
+
   await fetch(`http://localhost:8080/login?login=${login}&password=${password}`, {
     method: 'POST',
     headers: {
@@ -15,11 +16,15 @@ export const authorization = async ({ login, password, setLoading }: LoginProps)
     },
     body: JSON.stringify({ login, password })
   })
-    .then((res) => console.log(res))
+    .then((res) => {
+      if (res.status === 403) {
+        alert('Пользователя нет в системе');
+      }
+      return res.json()
+    })
     .then((data) => {
-      console.log(data);
-      userStore.setUserToken(data);
-      setLoading();
+      userStore.setUserToken(data.token);
+      userStore.setUserAuth(data.token ? true : false);
     })
     .catch((err) => {
       console.log(err);

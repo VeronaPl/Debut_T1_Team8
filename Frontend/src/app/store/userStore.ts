@@ -35,7 +35,7 @@ class UserAuthorization {
   userName: string = 'username';
   userRole: string = 'admin'; // admin / owner / user
   #sessionExpiry: number = 20; // Время через которое заканчивается сессия пользователя
-  isAuth: boolean = true;
+  isAuth: boolean = false;
   money: number = 50;
   transactions: UserTransactionsProps[] = [];
   owners: CFDsProps[] = [];

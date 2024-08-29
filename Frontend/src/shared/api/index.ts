@@ -1,2 +1,2 @@
 export * from './getData';
-export * from './Authorization';
+export * from './authorization';
