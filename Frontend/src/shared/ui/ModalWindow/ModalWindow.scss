@@ -16,9 +16,9 @@
   z-index: 230;
 }
 
-.ModalWindow.open{
-    opacity: 1;
-    pointer-events: all;
+.ModalWindow.open {
+  opacity: 1;
+  pointer-events: all;
 }
 
 .ModalCont {
@@ -54,8 +54,8 @@
   }
 }
 
-.ModalCont.open{
-    transform: scale(1);
+.ModalCont.open {
+  transform: scale(1);
 }
 
 @media (max-width: 1280px) {

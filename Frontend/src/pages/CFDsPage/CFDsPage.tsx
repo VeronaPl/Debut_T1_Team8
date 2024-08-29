@@ -25,8 +25,15 @@ export const CFDsPage = (): JSX.Element => {
           />
         </div>
       )}
-      
-      {modalCreate && <ModalCreate modalWindow={modalCreate} setModalWindow={() => setModalCreate(false)} title={'Создание ЦФО'} typeModal={typeModal}/>}
+
+      {modalCreate && (
+        <ModalCreate
+          modalWindow={modalCreate}
+          setModalWindow={() => setModalCreate(false)}
+          title={'Создание ЦФО'}
+          typeModal={typeModal}
+        />
+      )}
       <DataAnaliz needFilterSection={false} />
     </div>
   );

@@ -27,11 +27,15 @@ export interface CFDsProps {
 }
 
 class UserAuthorization {
-  #token = '';
+  #token =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzI0OTIxMDkyLCJleHAiOjE3MjQ5MjIyOTJ9.3kqK-oaf7RzOiSWYp0BNZ9BMKympPVnVKIThFLwjcw0';
   #userId = '';
+  firstName = '';
+  lastName = '';
+  averageName = '';
   userName = 'username';
   userRole = 'admin'; // admin / owner / user
-  #sessionExpiry = 0; // Время через которое заканчивается сессия пользователя
+  #sessionExpiry = 20; // Время через которое заканчивается сессия пользователя
   isAuth = true;
   money = 50;
   transactions: UserTransactionsProps[] = [];
@@ -43,12 +47,29 @@ class UserAuthorization {
     makeAutoObservable(this);
   }
 
-  setUserData(token: string, userId: string, userName: string, role: string, expiry: number, money: number) {
+  setUserToken(token: string) {
     this.#token = token;
+  }
+
+  getUserToken() {
+    return this.#token;
+  }
+
+  setUserData(
+    userId: string,
+    firstName: string,
+    lastName: string,
+    averageName: string,
+    userName: string,
+    role: string,
+    money: number
+  ) {
     this.#userId = userId;
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.averageName = averageName;
     this.userName = userName;
     this.userRole = role;
-    this.#sessionExpiry = expiry;
     this.money = money;
   }
 
@@ -56,6 +77,9 @@ class UserAuthorization {
     return {
       token: this.#token,
       userId: this.#userId,
+      firstName: this.firstName,
+      lastName: this.lastName,
+      averageName: this.averageName,
       userName: this.userName,
       userRole: this.userRole,
       sessionExpiry: this.#sessionExpiry,
@@ -92,6 +116,9 @@ class UserAuthorization {
   clearUserData() {
     this.#token = '';
     this.#userId = '';
+    this.firstName = '';
+    this.lastName = '';
+    this.averageName = '';
     this.userName = '';
     this.userRole = '';
     this.#sessionExpiry = 0;

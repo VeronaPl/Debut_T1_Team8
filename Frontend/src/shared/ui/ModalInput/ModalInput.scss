@@ -1,1 +1,9 @@
 @import '../../../app/App.scss';
+
+.textarea__error {
+  border: 1px solid red !important;
+  background-color: $light-red !important;
+  width: 100%;
+  font-family: inherit;
+  font-size: inherit;
+}

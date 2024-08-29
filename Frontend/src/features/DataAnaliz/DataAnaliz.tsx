@@ -52,15 +52,7 @@ export const DataAnaliz = ({ needFilterSection = true }): JSX.Element => {
 
   useEffect(() => {
     setTotalPages(Math.ceil(fullData.length / itemsPerPage));
-  }, [
-    fullData,
-    itemsPerPage,
-    searchValue,
-    selectedFilterType,
-    selectedDateStart,
-    selectedDateEnd,
-    selectedCFDs
-  ]);
+  }, [fullData, itemsPerPage, searchValue, selectedFilterType, selectedDateStart, selectedDateEnd, selectedCFDs]);
 
   useEffect(() => {
     if (sessionStorage.getItem('currentPage')) {

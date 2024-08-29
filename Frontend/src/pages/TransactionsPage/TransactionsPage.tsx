@@ -22,7 +22,14 @@ export const TransactionsPage = (): JSX.Element => {
           }}
         />
       </div>
-      {modalCreate && <ModalCreate modalWindow={modalCreate} setModalWindow={() => setModalCreate(false)} title={'Создать перевод'} typeModal={typeModal}/>}
+      {modalCreate && (
+        <ModalCreate
+          modalWindow={modalCreate}
+          setModalWindow={() => setModalCreate(false)}
+          title={'Создать перевод'}
+          typeModal={typeModal}
+        />
+      )}
       <DataAnaliz needFilterSection={true} />
     </div>
   );
