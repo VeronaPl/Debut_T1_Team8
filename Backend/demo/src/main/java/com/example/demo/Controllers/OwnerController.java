@@ -71,7 +71,7 @@ public class OwnerController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        CFO cfo = cfoService.getById(allidService.getTableId(AllId));
+        CFO cfo = cfoService.getById(allidService.getTableIdType(AllId, "cfo"));
         if (cfo == null || !Objects.equals(cfo.getOwnerId(), pers.getId())){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -86,8 +86,8 @@ public class OwnerController {
         if (pers == null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        Long id_from = allidService.getTableId(All_id_from);
-        Long id_to = allidService.getTableId(All_id_to);
+        Long id_from = allidService.getTableIdType(All_id_from, "cfo");
+        Long id_to = allidService.getTableIdType(All_id_to, "cfo");
         CFO cfo_from = cfoService.getById(id_from);
         if (cfo_from == null || !Objects.equals(cfo_from.getOwnerId(), pers.getId())){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -124,8 +124,8 @@ public class OwnerController {
         if (pers == null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        Long id_from = allidService.getTableId(All_id_from);
-        Long persIdTo = allidService.getTableId(All_persIdTo);
+        Long id_from = allidService.getTableIdType(All_id_from, "cfo");
+        Long persIdTo = allidService.getTableIdType(All_persIdTo, "person");
         Person persTo = personService.getById(persIdTo);
 
         if (persTo == null ){
@@ -162,7 +162,7 @@ public class OwnerController {
         if (pers == null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        Long id_from = allidService.getTableId(All_id_from);
+        Long id_from = allidService.getTableIdType(All_id_from, "cfo");
         boolean persIs = personService.getAll().stream().anyMatch(p -> Objects.equals(p.getLogin(), persLogTo));
         if (!persIs){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -209,7 +209,7 @@ public class OwnerController {
         if (AllcfoId == null){
             transactions = transactions.stream().filter(t -> Objects.equals(t.getOwner(), pers.getId())).toList();
         }else{
-            Long cfoId = allidService.getTableId(AllcfoId);
+            Long cfoId = allidService.getTableIdType(AllcfoId, "cfo");
 
             CFO cfo = cfoService.getById(cfoId);
             if (cfo == null || !Objects.equals(cfo.getOwnerId(), pers.getId())){
@@ -222,7 +222,7 @@ public class OwnerController {
         }
 
         if (AllpersonId != null){
-            Long personId = allidService.getTableId(AllpersonId);
+            Long personId = allidService.getTableIdType(AllpersonId, "person");
 
             Person p = personService.getById(personId);
             if (p == null){
@@ -309,7 +309,7 @@ public class OwnerController {
         }
         CFO cfo = null;
         if (Objects.equals(obj.getTypeId(), "cfo"))
-            cfo = cfoService.getById(allidService.getTableId(AllId));
+            cfo = cfoService.getById(allidService.getTableIdType(AllId, "cfo"));
         if (cfo == null || !Objects.equals(cfo.getOwnerId(), pers.getId())){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

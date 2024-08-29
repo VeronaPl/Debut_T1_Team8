@@ -20,7 +20,10 @@ public class ALLIDService {
         return repo.findAll().stream().filter(p -> Objects.equals(p.getTypeId(), typeId) && Objects.equals(p.getTableId(), tableId)).findFirst().get().getId();
     }
 
-    public Long getTableId(Long id) {
+    public Long getTableIdType(Long id, String typeId) {
+        ALLID a = repo.findById(id).get();
+        if (!Objects.equals(a.getTypeId(), typeId))
+            return null;
         return repo.findById(id).get().getTableId();
     }
 
