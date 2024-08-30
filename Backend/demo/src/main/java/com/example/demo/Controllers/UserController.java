@@ -100,7 +100,7 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        Person persAnother = personService.getById(allidService.getTableId(AllId));
+        Person persAnother = personService.getById(allidService.getTableIdType(AllId, "person"));
         if (persAnother == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

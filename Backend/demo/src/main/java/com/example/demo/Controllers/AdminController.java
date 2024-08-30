@@ -81,7 +81,7 @@ public class AdminController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        CFO cfo = cfoService.getById(allidService.getTableId(AllId));
+        CFO cfo = cfoService.getById(allidService.getTableIdType(AllId, "cfo"));
         if (cfo == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -94,7 +94,7 @@ public class AdminController {
         if (isNotAdmin()){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        Long ownerId = allidService.getTableId(AllownerId);
+        Long ownerId = allidService.getTableIdType(AllownerId, "person");
         boolean cfoIs = cfoService.getAll().stream().anyMatch(p -> Objects.equals(p.getCfoName(), cfoName));
         if (cfoIs){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -179,7 +179,7 @@ public class AdminController {
         if (isNotAdmin()){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        Long cfoId = allidService.getTableId(AllcfoId);
+        Long cfoId = allidService.getTableIdType(AllcfoId, "cfo");
         CFO cfo = cfoService.getById(cfoId);
 
         if (cfo == null){
@@ -213,7 +213,7 @@ public class AdminController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        CFO cfo = cfoService.getById(allidService.getTableId(AllcfoId));
+        CFO cfo = cfoService.getById(allidService.getTableIdType(AllcfoId, "cfo"));
 
         if (cfo == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -234,7 +234,7 @@ public class AdminController {
         if (isNotAdmin()){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        Long Id = allidService.getTableId(AllId);
+        Long Id = allidService.getTableIdType(AllId, "person");
         if (Id == 1L){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -271,7 +271,7 @@ public class AdminController {
         if (isNotAdmin()){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        Long Id = allidService.getTableId(AllId);
+        Long Id = allidService.getTableIdType(AllId, "cfo");
         CFO cfo = cfoService.getById(Id);
         if (cfo == null ){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -288,7 +288,7 @@ public class AdminController {
         if (isNotAdmin()){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        Long Id = allidService.getTableId(AllId);
+        Long Id = allidService.getTableIdType(AllId, "person");
         Person pers = personService.getById(Id);
         if (Id == 1L){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -343,8 +343,8 @@ public class AdminController {
         if (isNotAdmin()){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        Long CFOId = allidService.getTableId(AllCFOId);
-        Long Id = allidService.getTableId(AllId);
+        Long CFOId = allidService.getTableIdType(AllCFOId, "cfo");
+        Long Id = allidService.getTableIdType(AllId, "person");
         Person pers = personService.getById(Id);
         CFO cfo = cfoService.getById(CFOId);
         if (pers == null || cfo == null ){
@@ -365,7 +365,7 @@ public class AdminController {
         if (isNotAdmin()){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        Long CFOId = allidService.getTableId(AllCFOId);
+        Long CFOId = allidService.getTableIdType(AllCFOId, "cfo");
         boolean persIs = personService.getAll().stream().anyMatch(p -> Objects.equals(p.getLogin(), login));
         if (!persIs){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -392,7 +392,7 @@ public class AdminController {
         if (isNotAdmin()){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        Long Id = allidService.getTableId(AllId);
+        Long Id = allidService.getTableIdType(AllId, "cfo");
         boolean cfoIs = cfoService.getAll().stream().anyMatch(p -> Objects.equals(p.getCfoName(), newName));
         if (cfoIs){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -422,7 +422,7 @@ public class AdminController {
         if (AllcfoId == null){
             transactions = transactions.stream().filter(t -> !Objects.equals(t.getOwner(), 0L)).toList();
         }else{
-            Long cfoId = allidService.getTableId(AllcfoId);
+            Long cfoId = allidService.getTableIdType(AllcfoId, "cfo");
             CFO cfo = cfoService.getById(cfoId);
             if (cfo == null ){
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -434,7 +434,7 @@ public class AdminController {
         }
 
         if (AllpersonId != null){
-            Long personId = allidService.getTableId(AllpersonId);
+            Long personId = allidService.getTableIdType(AllpersonId, "person");
 
             Person p = personService.getById(personId);
             if (p == null){
@@ -514,9 +514,9 @@ public class AdminController {
         CFO cfo = null;
         Person person = null;
         if (Objects.equals(obj.getTypeId(), "cfo"))
-            cfo = cfoService.getById(allidService.getTableId(AllId));
+            cfo = cfoService.getById(allidService.getTableIdType(AllId, "cfo"));
         if (Objects.equals(obj.getTypeId(), "person"))
-            person = personService.getById(allidService.getTableId(AllId));
+            person = personService.getById(allidService.getTableIdType(AllId, "person"));
         if (cfo == null && person == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
