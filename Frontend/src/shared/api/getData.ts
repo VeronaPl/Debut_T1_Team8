@@ -93,5 +93,4 @@ export const getData = async (setLoading: () => void): Promise<void> => {
     setLoading();
   })
   .catch((err) => console.log(err));
-  console.log(userStore.users)
 };

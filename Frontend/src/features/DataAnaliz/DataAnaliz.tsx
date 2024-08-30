@@ -19,7 +19,7 @@ import { cfdsTransactionsFiltered } from '../../shared/api/cfdsTransactionsFilte
 
 export const DataAnaliz = ({ needFilterSection = true, pageKind = 'transactions' }): JSX.Element => {
   // data
-  const [fullData, setFullData] = useState<UserTransactionsProps[]>([...userStore.{}]);
+  const [fullData, setFullData] = useState<UserTransactionsProps[]>([...userStore[pageKind]]);
 
   // pagination
   const [currentPage, setCurrentPage] = useState(0);
@@ -66,7 +66,7 @@ export const DataAnaliz = ({ needFilterSection = true, pageKind = 'transactions'
 
   useEffect(() => {
     getFilteringOptionsCFDs();
-  }, [userStore.transactions, userStore.CFDs]);
+  }, [userStore[pageKind], userStore.CFDs]);
 
   const getFilteringOptionsCFDs = () => {
     if (userStore.CFDs.length !== 0) {
@@ -77,7 +77,6 @@ export const DataAnaliz = ({ needFilterSection = true, pageKind = 'transactions'
         )
         .map((cfd) => ({ label: cfd.cfoName, value: cfd.id }));
       setCFDs(uniqueCFDs);
-
     }
   };
 
@@ -130,7 +129,7 @@ export const DataAnaliz = ({ needFilterSection = true, pageKind = 'transactions'
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     const search = searchValue.toLowerCase();
-    const arr = [...userStore.transactions];
+    const arr = [...userStore[pageKind]];
 
     if (search !== '') {
       setCurrentPage(0);
@@ -147,7 +146,7 @@ export const DataAnaliz = ({ needFilterSection = true, pageKind = 'transactions'
     } else {
       setCurrentPage(0);
       sessionStorage.setItem('currentPage', 0);
-      setFullData([...userStore.transactions]);
+      setFullData([...userStore[pageKind]]);
       setSelectedCFDs([]);
       setSelectedFilterType(null);
       setSelectedDateStart('');
