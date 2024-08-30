@@ -578,7 +578,7 @@ export const DataAnaliz = ({ needFilterSection = true, pageKind = 'transactions'
                   <td
                     className='clickable'
                     onClick={() => {
-                      route(`/${ pageKind === 'owners' || pageKind === 'users' ? transaction.login : pageKind === 'CFDs' ? transaction.id : transaction.from}`);
+                      route(`/${ pageKind === 'owners' || pageKind === 'users' ? transaction.login : pageKind === 'CFDs' ? transaction.id : transaction.type === 'cfoToPerson' || transaction.type === 'cfoToCFO' ? transaction.from : transaction.to}`);
                     }}
                   >
                     {pageKind === 'owners' || pageKind === 'users' ? transaction.login : pageKind === 'CFDs' ? transaction.cfoName : transaction.from}
