@@ -6,7 +6,7 @@ export const UsersPage = (): JSX.Element => {
   return (
     <div>
       <h1 className='MainContent__title withoutButton'>Список пользователей</h1>
-      <DataAnaliz needFilterSection={false} />
+      <DataAnaliz needFilterSection={false} pageKind={'users'}/>
     </div>
   );
 };

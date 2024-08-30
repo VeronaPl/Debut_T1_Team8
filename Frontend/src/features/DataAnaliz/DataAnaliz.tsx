@@ -17,9 +17,10 @@ import { MDBIcon } from 'mdbreact';
 import { useNavigate } from 'react-router';
 import { cfdsTransactionsFiltered } from '../../shared/api/cfdsTransactionsFiltered';
 
-export const DataAnaliz = ({ needFilterSection = true }): JSX.Element => {
+export const DataAnaliz = ({ needFilterSection = true, pageKind = 'transactions' }): JSX.Element => {
   // data
-  const [fullData, setFullData] = useState<UserTransactionsProps[]>([...userStore.transactions]);
+  const [fullData, setFullData] = useState<UserTransactionsProps[]>([...userStore.{}]);
+
   // pagination
   const [currentPage, setCurrentPage] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(20);

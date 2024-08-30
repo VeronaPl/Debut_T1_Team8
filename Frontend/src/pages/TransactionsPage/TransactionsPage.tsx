@@ -30,7 +30,7 @@ export const TransactionsPage = (): JSX.Element => {
           typeModal={typeModal}
         />
       )}
-      <DataAnaliz needFilterSection={true} />
+      <DataAnaliz needFilterSection={true} pageKind={'transactions'} />
     </div>
   );
 };

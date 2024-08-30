@@ -34,7 +34,7 @@ export const CFDsPage = (): JSX.Element => {
           typeModal={typeModal}
         />
       )}
-      <DataAnaliz needFilterSection={false} />
+      <DataAnaliz needFilterSection={false} pageKind={'CFDs'}/>
     </div>
   );
 };
