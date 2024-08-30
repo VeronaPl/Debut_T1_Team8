@@ -32,7 +32,7 @@ export const DataAnaliz = ({ needFilterSection = true }): JSX.Element => {
   // filter
   const [CFDs, setCFDs] = useState<CFDsProps[]>([]);
   const types = [
-    { label: 'Пользователю', value: 'ToUser' },
+    { label: 'Пользователю', value: 'cfoToPerson' },
     { label: 'Между ЦФО', value: 'cfoToCFO' },
     { label: 'Покупка', value: 'Buy' }
   ];
@@ -158,7 +158,6 @@ export const DataAnaliz = ({ needFilterSection = true }): JSX.Element => {
     setCurrentPage(0);
     sessionStorage.setItem('currentPage', 0);
     const arr = [...userStore.transactions];
-    const transactionsFiltered = cfdsTransactionsFiltered();
 
     switch (filterType) {
       case 'SelectCFDs':
@@ -169,13 +168,17 @@ export const DataAnaliz = ({ needFilterSection = true }): JSX.Element => {
           setFullData(
             arr.filter(
               (transaction: UserTransactionsProps) =>
-                'id_cfo_from' in transaction &&
+                ('from' in transaction && transaction.from in selectedCFDsArray) ||
+                ('to' in transaction && transaction.to in selectedCFDsArray) ||
+                ('id_cfo_from' in transaction &&
                 'id_cfo_to' in transaction &&
+                userStore.userRole !== 'user' &&
                 transaction.type === 'cfoToCFO' &&
-                (('from' in transaction && transaction.from in selectedCFDsArray) ||
-                  ('to' in transaction && transaction.to in selectedCFDsArray) ||
-                  ('id_cfo_from' in transaction && transaction.id_cfo_from !== null) ||
-                  ('id_cfo_to' in transaction && transaction.id_cfo_to !== null))
+                  ('id_cfo_from' in transaction && transaction.id_cfo_from !== null) &&
+                  ('id_cfo_to' in transaction && transaction.id_cfo_to !== null)) ||
+                (userStore.userRole === 'admin' && transaction.type === 'adminToCFO' &&
+                  ('id_cfo_to' in transaction && transaction.id_cfo_to !== null && transaction.id_cfo_to in selectedCFDsArray)) ||
+                ('id_cfo_from' in transaction && transaction.id_cfo_from !== null && transaction.id_cfo_from in selectedCFDsArray)
             )
           );
         }
