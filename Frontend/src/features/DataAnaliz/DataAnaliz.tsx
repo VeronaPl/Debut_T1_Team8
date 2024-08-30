@@ -42,7 +42,7 @@ export const DataAnaliz = ({ needFilterSection = true }): JSX.Element => {
   const [selectedDateEnd, setSelectedDateEnd] = useState<string | null>('');
   // sorting
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
-  const [sortType, setSortType] = useState<keyof UserTransactionsProps>('username_sender');
+  const [sortType, setSortType] = useState<keyof UserTransactionsProps>('from');
 
   const route = useNavigate();
 
@@ -67,13 +67,14 @@ export const DataAnaliz = ({ needFilterSection = true }): JSX.Element => {
   }, [userStore.transactions, userStore.owners]);
 
   const getFilteringOptionsCFDs = () => {
-    if (userStore.transactions.length !== 0) {
-      const uniqueCFDs = userStore.transactions
+    if (userStore.CFDs.length !== 0) {
+      console.log(userStore.CFDs);
+      const uniqueCFDs = userStore.CFDs
         .filter(
-          (transaction, index, self) =>
-            index === self.findIndex((t) => t.username_sender === transaction.username_sender)
+          (cfd, index, self) =>
+            index === self.findIndex((t: UserTransactionsProps) => t.id === cfd.id)
         )
-        .map((transaction) => ({ label: transaction.username_sender, value: transaction.username_sender }));
+        .map((cfd) => ({ label: cfd.cfoName, value: cfd.id }));
       setCFDs(uniqueCFDs);
     }
   };

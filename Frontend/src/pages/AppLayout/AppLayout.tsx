@@ -32,7 +32,7 @@ export const AppLayout = observer((): JSX.Element => {
   }, [loading, userStore.isAuth]);
 
   setInterval(() => {
-    if (userStore.isAuth) {
+    if (userStore.getUserToken()) {
       refresh();
     }
   }, 1170000);

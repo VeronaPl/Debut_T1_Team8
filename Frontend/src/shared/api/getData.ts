@@ -1,4 +1,5 @@
 import { userStore } from '../../app/store/userStore';
+import { refresh } from './refresh';
 
 export const getData = async (setLoading: () => void): Promise<void> => {
   await fetch('http://localhost:8080/profile', {
@@ -8,7 +9,12 @@ export const getData = async (setLoading: () => void): Promise<void> => {
       'Authorization': `Bearer ${userStore.getUserToken()}`
     }
   })
-    .then((res) => res.json())
+    .then((res) => {
+      if (res.status === 500 || res.status === 401) {
+        refresh();
+      }
+      return res.json()
+    })
     .then((data) => {
       userStore.setUserData(data.id, data.firstName, data.lastName, data.averageName, data.login, data.role, data.sum);
     })
@@ -21,7 +27,12 @@ export const getData = async (setLoading: () => void): Promise<void> => {
       'Authorization': `Bearer ${userStore.getUserToken()}`
     }
   })
-    .then((res) => res.json())
+    .then((res) => {
+      if (res.status === 500 || res.status === 401) {
+        refresh();
+      }
+      return res.json()
+    })
     .then((data) => {
       userStore.transactions = data;
     })
@@ -34,10 +45,15 @@ export const getData = async (setLoading: () => void): Promise<void> => {
       'Authorization': `Bearer ${userStore.getUserToken()}`
     }
   })
-  .then((res) => res.json())
+  .then((res) => {
+    if (res.status === 500 || res.status === 401) {
+      refresh();
+    }
+    return res.json()
+  })
   .then((data) => {
     userStore.CFDs = data;
-    setLoading();
+
   })
   .catch((err) => console.log(err));
   
@@ -48,10 +64,14 @@ export const getData = async (setLoading: () => void): Promise<void> => {
       'Authorization': `Bearer ${userStore.getUserToken()}`
     }
   })
-  .then((res) => res.json())
+  .then((res) => {
+    if (res.status === 500 || res.status === 401) {
+      refresh();
+    }
+    return res.json()
+  })
   .then((data) => {
     userStore.owners = data;
-    setLoading();
   })
   .catch((err) => console.log(err));
   
@@ -62,7 +82,12 @@ export const getData = async (setLoading: () => void): Promise<void> => {
       'Authorization': `Bearer ${userStore.getUserToken()}`
     }
   })
-  .then((res) => res.json())
+  .then((res) => {
+    if (res.status === 500 || res.status === 401) {
+      refresh();
+    }
+    return res.json()
+  })
   .then((data) => {
     userStore.users = data;
     setLoading();
