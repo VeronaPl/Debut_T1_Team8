@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -37,12 +38,15 @@ public class AuthController {
     @Autowired
     private ALLIDService allidService;
 
+    @Value("${security.jwt.expiration-time}")
+    long jwtExpiration;
+
     @Operation(summary = "Получить токен (действителен 20 минут)")
     @PostMapping("/login")
     public ResponseEntity<JWTReq> login(String login, String password) {
         final String accessToken = authService.login(login, Sha256.sha256(password) );
 
-        return new ResponseEntity<>(new JWTReq(accessToken), HttpStatus.OK);
+        return new ResponseEntity<>(new JWTReq(accessToken, jwtExpiration), HttpStatus.OK);
     }
 
     @Operation(summary = "Получить обновленный токен (действителен 20 минут)", security = {@SecurityRequirement(name = "bearer-key")})
@@ -50,7 +54,7 @@ public class AuthController {
     public ResponseEntity<JWTReq> newToken() {
         final String accessToken = authService.newToken();
 
-        return new ResponseEntity<>(new JWTReq(accessToken), HttpStatus.OK);
+        return new ResponseEntity<>(new JWTReq(accessToken, jwtExpiration), HttpStatus.OK);
     }
 
     @Operation(summary = "Просмотр своего аккаунта", security = {@SecurityRequirement(name = "bearer-key")})
@@ -91,7 +95,7 @@ public class AuthController {
         allidService.create(allid);
 
         final String accessToken = authService.login(login, hashPass);
-        return new ResponseEntity<>(new JWTReq(accessToken), HttpStatus.OK);
+        return new ResponseEntity<>(new JWTReq(accessToken, jwtExpiration), HttpStatus.OK);
     }
 
 }
