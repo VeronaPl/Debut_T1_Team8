@@ -1,0 +1,89 @@
+@import '../../../app/App.scss';
+
+.ModalWindow {
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.5s;
+  z-index: 230;
+}
+
+.ModalWindow.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.ModalCont {
+  background-color: white;
+  width: 400px;
+  min-height: 300px;
+  height: auto;
+  border-radius: 45px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding: 21px;
+  cursor: default;
+
+  &__header {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 30px;
+    align-items: center;
+    margin-bottom: 20px;
+    font-size: 20px;
+    font-weight: 600;
+
+    &__title {
+      margin: 0;
+      text-align: center;
+    }
+
+    &__close {
+      cursor: pointer;
+      text-align: end;
+    }
+  }
+}
+
+.ModalCont.open {
+  transform: scale(1);
+}
+
+@media (max-width: 1280px) {
+  .ModalCont {
+    width: 630px;
+    //height: 500px;
+    border-radius: 35px;
+    padding-left: 35px;
+    padding-right: 35px;
+  }
+}
+
+@media (max-width: 1000px) {
+  .ModalCont {
+    width: 544px;
+    //height: 400px;
+    border-radius: 30px;
+    padding-left: 28px;
+    padding-right: 28px;
+  }
+}
+
+@media (max-width: 768px) {
+  .ModalCont {
+    width: 336px;
+    //height: 500px;
+    border-radius: 30px;
+    padding-left: 7px;
+    padding-right: 7px;
+  }
+}

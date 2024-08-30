@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router';
 import { FormInput } from '../../../shared/ui/FormInput';
 import { LoginButton } from '../../../shared/ui/buttons/Login';
 import { userStore } from '../../../app/store/userStore';
+import { authorization } from '../../../shared/api';
 
 export interface RegisterValues {
   username: string;
@@ -16,21 +17,21 @@ const validate = (values: RegisterValues) => {
   const errors: Partial<RegisterValues> = {};
   if (!values.username) {
     errors.username = '* Ник обязателен';
-  } else if (values.username.length < 6) {
-    errors.username = '* Ник должен быть не менее 6 символов';
+  } else if (values.username.length < 5) {
+    errors.username = '* Ник должен быть не менее 5 символов';
   } else if (values.username.length > 20) {
     errors.username = '* Ник должен быть не более 20 символов';
-  } else if (!/^(?=.{6,20}$)(?![_.])[a-zA-Z0-9._]+(?<![_.])$/.test(values.username)) {
+  } else if (!/^(?=.{5,20}$)(?![_.])[a-zA-Z0-9._]+(?<![_.])$/.test(values.username)) {
     errors.username = '* Неверный формат ника';
   }
   if (!values.password) {
     errors.password = '* Пароль обязателен';
-  } else if (values.password.length < 6) {
-    errors.password = '* Пароль должен быть не менее 6 символов';
+  } else if (values.password.length < 5) {
+    errors.password = '* Пароль должен быть не менее 5 символов';
   }
   if (!values.password2) {
     errors.password2 = '* Пароль обязателен';
-  } else if (values.password2.length < 6) {
+  } else if (values.password2.length < 5) {
     errors.password2 = '* Неверный формат пароля';
   } else if (values.password2 !== values.password) {
     errors.password2 = '* Пароли не совпадают';
@@ -40,8 +41,12 @@ const validate = (values: RegisterValues) => {
 
 export const RegisterForm = (): JSX.Element => {
   const onSubmit = async (values: RegisterValues) => {
-    console.log('Form values:', values.username, values.password);
-    userStore.setUserAuth(true);
+    try {
+      await authorization({ login: values.username, password: values.password, type: 'registration' });
+    } catch (error) {
+      console.log(error);
+      router('/login');
+    }
   };
 
   const router = useNavigate();

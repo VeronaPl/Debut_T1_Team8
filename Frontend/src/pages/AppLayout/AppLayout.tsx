@@ -4,9 +4,10 @@ import { userStore } from '../../app/store/userStore';
 import { observer } from 'mobx-react-lite';
 import { Header } from '../../widgets';
 import { SideMenu } from '../../widgets';
-import { getData } from '../../shared/api';
+import { authorization, getData, refresh } from '../../shared/api';
 import { MDBSpinner } from 'mdb-react-ui-kit';
 import './AppLayout.scss';
+import { Login } from '@mui/icons-material';
 
 export const AppLayout = observer((): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -22,8 +23,19 @@ export const AppLayout = observer((): JSX.Element => {
   }
 
   useEffect(() => {
-    getData(() => setLoading(false));
-  }, [loading]);
+    if (localStorage.getItem('token')) {
+      userStore.setUserToken(localStorage.getItem('token'));
+      userStore.setUserAuth(true);
+      getData(() => setLoading(false));
+    }
+    // authorization({ login: 'admin', password: '12345', setLoading: () => setLoading(false) });
+  }, [loading, userStore.isAuth]);
+
+  setInterval(() => {
+    if (userStore.getUserToken()) {
+      refresh();
+    }
+  }, 1170000);
 
   return (
     <div className='layout-wrap'>
