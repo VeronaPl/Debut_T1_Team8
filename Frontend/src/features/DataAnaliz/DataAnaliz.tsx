@@ -134,15 +134,36 @@ export const DataAnaliz = ({ needFilterSection = true, pageKind = 'transactions'
     if (search !== '') {
       setCurrentPage(0);
       sessionStorage.setItem('currentPage', 0);
-      setFullData(
-        arr.filter(
-          (transaction: UserTransactionsProps) =>
-            ('from' in transaction &&
-              transaction.from.toString().toLowerCase().includes(search)) ||
-            ('to' in transaction &&
-              transaction.to.toString().toLowerCase().includes(search))
-        )
-      );
+      if (pageKind === 'transactions') {
+        setFullData(
+          arr.filter(
+            (transaction: UserTransactionsProps) =>
+              ('from' in transaction &&
+                transaction.from.toString().toLowerCase().includes(search)) ||
+              ('to' in transaction &&
+                transaction.to.toString().toLowerCase().includes(search))
+          )
+        );
+      } else if (pageKind === 'owners' || pageKind === 'users') {
+        const fullName = pageKind.lastName + ' ' + pageKind.firstName + ' ' + pageKind.averageName;
+        setFullData(
+          arr.filter(
+            (owner: UserTransactionsProps) =>
+              ('login' in owner &&
+                owner.login.toString().toLowerCase().includes(search)) ||
+              ('to' in owner &&
+                owner.fullName.toString().toLowerCase().includes(search))
+          )
+        );
+      } else if (pageKind === 'CFDs') {
+        setFullData(
+          arr.filter(
+            (cfd: UserTransactionsProps) =>
+              ('cfoName' in cfd &&
+                cfd.cfoName.toString().toLowerCase().includes(search))
+          )
+        );
+      }
     } else {
       setCurrentPage(0);
       sessionStorage.setItem('currentPage', 0);
@@ -480,9 +501,9 @@ export const DataAnaliz = ({ needFilterSection = true, pageKind = 'transactions'
           <MDBTableHead light>
             <tr className='dataAnaliz__table__head' style={{ fontSize: '18px', fontWeight: '600' }}>
               <th scope='col'>№</th>
-              <th scope='col' className='hoverable' onClick={() => sorting('from')}>
-                Отправитель{' '}
-                {sortType === 'from' && (
+              <th scope='col' className='hoverable' onClick={() => sorting(`${pageKind === 'owners' || pageKind === 'users' ? 'login' : pageKind === 'CFDs' ? 'cfoName' : 'from'}`)}>
+                {pageKind === 'owners' || pageKind === 'users' ? 'Ник' : pageKind === 'CFDs' ? 'Название' : 'Отправитель'}{' '}
+                {(sortType === 'from' || sortType === 'login' || sortType === 'cfoName') && (
                   <span>
                     <MDBIcon
                       fas
@@ -492,42 +513,53 @@ export const DataAnaliz = ({ needFilterSection = true, pageKind = 'transactions'
                   </span>
                 )}
               </th>
-              <th scope='col' className='hoverable' onClick={() => sorting('to')}>
-                Получатель{' '}
-                {sortType === 'to' && (
-                  <span>
-                    <MDBIcon
-                      fas
-                      className='dataAnaliz__table__head_arrow'
-                      icon={`arrow-${order === 'asc' ? 'down' : 'up'}`}
-                    />
-                  </span>
-                )}
-              </th>
-              <th scope='col' className='hoverable' onClick={() => sorting('sum')}>
-                Сумма{' '}
-                {sortType === 'sum' && (
-                  <span>
-                    <MDBIcon
-                      fas
-                      className='dataAnaliz__table__head_arrow'
-                      icon={`arrow-${order === 'asc' ? 'down' : 'up'}`}
-                    />
-                  </span>
-                )}
-              </th>
-              <th scope='col' className='hoverable' onClick={() => sorting('datatime')}>
-                Дата
-                {sortType === 'datatime' && (
-                  <span>
-                    <MDBIcon
-                      fas
-                      className='dataAnaliz__table__head_arrow'
-                      icon={`arrow-${order === 'asc' ? 'down' : 'up'}`}
-                    />
-                  </span>
-                )}
-              </th>
+              {
+                pageKind !== 'CFDs' ? 
+                <>
+                  <th scope='col' className='hoverable' onClick={() => sorting(`${pageKind === 'owners' || pageKind === 'users' ? 'averageName' : 'to'}`)}>
+                  {pageKind === 'owners' || pageKind === 'users' ? 'ФИО' : 'Получатель'}{' '}
+                    {(sortType === 'to' || sortType === 'averageName') && (
+                      <span>
+                        <MDBIcon
+                          fas
+                          className='dataAnaliz__table__head_arrow'
+                          icon={`arrow-${order === 'asc' ? 'down' : 'up'}`}
+                        />
+                      </span>
+                    )}
+                  </th>
+                  {pageKind === 'transactions' ? 
+                  <>
+                    <th scope='col' className='hoverable' onClick={() => sorting('sum')}>
+                      Сумма{' '}
+                      {sortType === 'sum' && (
+                        <span>
+                          <MDBIcon
+                            fas
+                            className='dataAnaliz__table__head_arrow'
+                            icon={`arrow-${order === 'asc' ? 'down' : 'up'}`}
+                          />
+                        </span>
+                      )}
+                    </th>
+                    <th scope='col' className='hoverable' onClick={() => sorting('datatime')}>
+                      Дата
+                      {sortType === 'datatime' && (
+                        <span>
+                          <MDBIcon
+                            fas
+                            className='dataAnaliz__table__head_arrow'
+                            icon={`arrow-${order === 'asc' ? 'down' : 'up'}`}
+                          />
+                        </span>
+                      )}
+                    </th>
+                  </>
+                  : <></>}
+                  
+                </> 
+                : <></>
+              }
             </tr>
           </MDBTableHead>
           {searchResults.length === 0 ? (
@@ -539,28 +571,34 @@ export const DataAnaliz = ({ needFilterSection = true, pageKind = 'transactions'
               </tr>
             </MDBTableBody>
           ) : (
-            searchResults.map((transaction: UserTransactionsProps, index: number) => (
+            searchResults.map((transaction: any, index: number) => (
               <MDBTableBody key={index + currentPage * itemsPerPage}>
                 <tr>
                   <th scope='row'>{index + 1 + currentPage * itemsPerPage}</th>
                   <td
                     className='clickable'
                     onClick={() => {
-                      route(`/${transaction.from}`);
+                      route(`/${ pageKind === 'owners' || pageKind === 'users' ? transaction.login : pageKind === 'CFDs' ? transaction.id : transaction.from}`);
                     }}
                   >
-                    {transaction.from}
+                    {pageKind === 'owners' || pageKind === 'users' ? transaction.login : pageKind === 'CFDs' ? transaction.cfoName : transaction.from}
                   </td>
-                  <td
-                    className='clickable'
-                    onClick={() => {
-                      route(`/${transaction.to}`);
-                    }}
-                  >
-                    {transaction.to}
-                  </td>
-                  <td>{transaction.sum}</td>
-                  <td>{transaction.datatime}</td>
+                  {
+                    pageKind !== 'CFDs' ?
+                    <>
+                      <td
+                        className='clickable'
+                        onClick={() => {
+                          route(`/${ pageKind === 'owners' || pageKind === 'users' ? transaction.login : transaction.to}`);
+                        }}
+                      >
+                        {pageKind === 'owners' || pageKind === 'users' ? transaction.averageName : transaction.to}
+                      </td>
+                      <td>{transaction.sum}</td>
+                      <td>{transaction.datatime}</td>
+                    </>
+                    : <></>
+                  }
                 </tr>
               </MDBTableBody>
             ))
