@@ -35,10 +35,6 @@ export const SideMenuData = (): MenuItem[] => {
           path: '/cfds'
         },
         {
-          title: 'Пользователи',
-          path: '/users'
-        },
-        {
           title: 'Транзакции',
           path: '/transactions'
         },

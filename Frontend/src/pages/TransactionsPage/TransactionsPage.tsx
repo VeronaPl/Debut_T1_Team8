@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import './TransactionsPage.scss';
-import { LoginButton } from '../../shared';
+import { LoginButton, ModalWindow } from '../../shared';
 import { DataAnaliz } from '../../features';
+import { ModalCreate } from '../../features/ModalCreate/ModalCreate';
 
 export const TransactionsPage = (): JSX.Element => {
   const [modalCreate, setModalCreate] = useState<boolean>(false);
@@ -21,6 +22,14 @@ export const TransactionsPage = (): JSX.Element => {
           }}
         />
       </div>
+      {modalCreate && (
+        <ModalCreate
+          modalWindow={modalCreate}
+          setModalWindow={() => setModalCreate(false)}
+          title={'Создать перевод'}
+          typeModal={typeModal}
+        />
+      )}
       <DataAnaliz needFilterSection={true} />
     </div>
   );

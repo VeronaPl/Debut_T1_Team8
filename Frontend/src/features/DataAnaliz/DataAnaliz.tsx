@@ -37,13 +37,12 @@ export const DataAnaliz = ({ needFilterSection = true }): JSX.Element => {
   ];
   const [owners, setOwners] = useState<CFDsProps[]>([]);
   const [selectedCFDs, setSelectedCFDs] = useState([]);
-  const [selectedOwners, setSelectedOwners] = useState([]);
   const [selectedFilterType, setSelectedFilterType] = useState<string | null>('');
   const [selectedDateStart, setSelectedDateStart] = useState<string | null>('');
   const [selectedDateEnd, setSelectedDateEnd] = useState<string | null>('');
   // sorting
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
-  const [sortType, setSortType] = useState<keyof UserTransactionsProps>('username_sender');
+  const [sortType, setSortType] = useState<keyof UserTransactionsProps>('from');
 
   const route = useNavigate();
 
@@ -53,16 +52,7 @@ export const DataAnaliz = ({ needFilterSection = true }): JSX.Element => {
 
   useEffect(() => {
     setTotalPages(Math.ceil(fullData.length / itemsPerPage));
-  }, [
-    fullData,
-    itemsPerPage,
-    searchValue,
-    selectedFilterType,
-    selectedDateStart,
-    selectedDateEnd,
-    selectedOwners,
-    selectedCFDs
-  ]);
+  }, [fullData, itemsPerPage, searchValue, selectedFilterType, selectedDateStart, selectedDateEnd, selectedCFDs]);
 
   useEffect(() => {
     if (sessionStorage.getItem('currentPage')) {
@@ -74,27 +64,18 @@ export const DataAnaliz = ({ needFilterSection = true }): JSX.Element => {
 
   useEffect(() => {
     getFilteringOptionsCFDs();
-    getFilteringOptionsOwners();
   }, [userStore.transactions, userStore.owners]);
 
   const getFilteringOptionsCFDs = () => {
-    if (userStore.transactions.length !== 0) {
-      const uniqueCFDs = userStore.transactions
+    if (userStore.CFDs.length !== 0) {
+      console.log(userStore.CFDs);
+      const uniqueCFDs = userStore.CFDs
         .filter(
-          (transaction, index, self) =>
-            index === self.findIndex((t) => t.username_sender === transaction.username_sender)
+          (cfd, index, self) =>
+            index === self.findIndex((t: UserTransactionsProps) => t.id === cfd.id)
         )
-        .map((transaction) => ({ label: transaction.username_sender, value: transaction.username_sender }));
+        .map((cfd) => ({ label: cfd.cfoName, value: cfd.id }));
       setCFDs(uniqueCFDs);
-    }
-  };
-
-  const getFilteringOptionsOwners = () => {
-    if (userStore.owners.length !== 0) {
-      const uniqueOwners = userStore.owners
-        .filter((owner, index, self) => index === self.findIndex((o) => o.login === owner.login))
-        .map((owner) => ({ label: owner.login, value: owner.login }));
-      setOwners(uniqueOwners);
     }
   };
 
@@ -168,7 +149,6 @@ export const DataAnaliz = ({ needFilterSection = true }): JSX.Element => {
       sessionStorage.setItem('currentPage', 0);
       setFullData([...userStore.transactions]);
       setSelectedCFDs([]);
-      setSelectedOwners([]);
       setSelectedFilterType(null);
       setSelectedDateStart('');
       setSelectedDateEnd('');
@@ -207,23 +187,6 @@ export const DataAnaliz = ({ needFilterSection = true }): JSX.Element => {
           setFullData(
             arr.filter(
               (transaction: UserTransactionsProps) => 'type' in transaction && transaction.type == selectedFilterType
-            )
-          );
-        }
-        break;
-      case 'SelectOwners':
-        setCurrentPage(0);
-        sessionStorage.setItem('currentPage', 0);
-        if (selectedOwners.length === 0) {
-          setFullData([...userStore.transactions]);
-        } else {
-          setFullData(
-            arr.filter(
-              (transaction: UserTransactionsProps) =>
-                'type' in transaction &&
-                transaction.type == 'BetweenCFDs' &&
-                'owner' in transaction &&
-                transaction.owner in selectedOwners
             )
           );
         }
@@ -464,22 +427,6 @@ export const DataAnaliz = ({ needFilterSection = true }): JSX.Element => {
               isClearable={true}
             />
           </div>
-          {userStore.userRole === 'admin' ? (
-            <div className='dataAnaliz__filterSection__select'>
-              <label id='SelectOwners' className='dataAnaliz__filterSection__select__label'>
-                По владельцу
-              </label>
-              <MultiSelect
-                className='dataAnaliz__filterSection__select__item'
-                options={owners}
-                value={selectedOwners}
-                onChange={setSelectedOwners}
-                labelledBy='SelectOwners'
-              />
-            </div>
-          ) : (
-            <></>
-          )}
           {userStore.userRole === 'admin' || userStore.userRole === 'owner' ? (
             <>
               <div className='dataAnaliz__filterSection__select'>

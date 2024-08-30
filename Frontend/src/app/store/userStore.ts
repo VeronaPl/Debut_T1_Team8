@@ -2,14 +2,14 @@ import { makeAutoObservable } from 'mobx';
 
 export interface UserTransactionsProps {
   id: number;
-  id_sender: string;
-  username_sender: string;
-  id_recipient: string;
-  username_recipient: string;
-  type: string;
-  owner?: string;
+  from: string;
+  to: string;
   sum: number;
-  date_time: string;
+  type: string;
+  comment: string;
+  datatime: Date;
+  id_cfo_from: number | null;
+  id_cfo_to: number | null;
 }
 
 export interface OwnerProps {
@@ -27,13 +27,16 @@ export interface CFDsProps {
 }
 
 class UserAuthorization {
-  #token = '';
-  #userId = '';
-  userName = 'username';
-  userRole = 'admin'; // admin / owner / user
-  #sessionExpiry = 0; // Время через которое заканчивается сессия пользователя
-  isAuth = true;
-  money = 50;
+  #token: string = '';
+  #userId: string = '';
+  firstName: string = '';
+  lastName: string = '';
+  averageName: string = '';
+  userName: string = 'username';
+  userRole: string = 'admin'; // admin / owner / user
+  #sessionExpiry: number = 20; // Время через которое заканчивается сессия пользователя
+  isAuth: boolean = false;
+  money: number = 50;
   transactions: UserTransactionsProps[] = [];
   owners: CFDsProps[] = [];
   CFDs: CFDsProps[] = [];
@@ -43,12 +46,29 @@ class UserAuthorization {
     makeAutoObservable(this);
   }
 
-  setUserData(token: string, userId: string, userName: string, role: string, expiry: number, money: number) {
+  setUserToken(token: string) {
     this.#token = token;
+  }
+
+  getUserToken() {
+    return this.#token;
+  }
+
+  setUserData(
+    userId: string,
+    firstName: string,
+    lastName: string,
+    averageName: string,
+    userName: string,
+    role: string,
+    money: number
+  ) {
     this.#userId = userId;
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.averageName = averageName;
     this.userName = userName;
     this.userRole = role;
-    this.#sessionExpiry = expiry;
     this.money = money;
   }
 
@@ -56,6 +76,9 @@ class UserAuthorization {
     return {
       token: this.#token,
       userId: this.#userId,
+      firstName: this.firstName,
+      lastName: this.lastName,
+      averageName: this.averageName,
       userName: this.userName,
       userRole: this.userRole,
       sessionExpiry: this.#sessionExpiry,
@@ -83,15 +106,15 @@ class UserAuthorization {
   // метод для установки статуса авторизации
   setUserAuth(isAuth: boolean) {
     this.isAuth = isAuth;
-    setTimeout(() => {
-      console.log(`Auth is ${isAuth}`);
-    }, 100);
   }
 
   // Вызывать при истечении срока сессии
   clearUserData() {
     this.#token = '';
     this.#userId = '';
+    this.firstName = '';
+    this.lastName = '';
+    this.averageName = '';
     this.userName = '';
     this.userRole = '';
     this.#sessionExpiry = 0;

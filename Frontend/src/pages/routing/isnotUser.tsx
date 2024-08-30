@@ -10,6 +10,8 @@ export const isNotUser = <P extends object>(WrappedComponent: React.ComponentTyp
     } else if (userStore.userRole === 'user') {
       const path = `/${userStore.userName}`;
       return <Navigate to={path} />;
+    } else if (userStore.userRole === 'owner') {
+      return <Navigate to='/cfds' />;
     }
 
     return <WrappedComponent {...props} />;
