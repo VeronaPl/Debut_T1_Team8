@@ -18,9 +18,20 @@ export const FormInput = ({ label, name, type, placeholder }: FormInputProps) =>
           {label} {meta.error && meta.touched && <span className='error'>{meta.error}</span>}
         </label>
         {type == 'textarea' ? (
-          <textarea {...input} placeholder={placeholder} autoComplete='new-password' className={meta.error && meta.touched ? 'input-error' : 'formInput__textarea'} />
+          <textarea
+            {...input}
+            placeholder={placeholder}
+            autoComplete='new-password'
+            className={meta.error && meta.touched ? 'input-error' : 'formInput__textarea'}
+          />
         ) : (
-          <input {...input} type={type} placeholder={placeholder} autoComplete='new-password' className={meta.error && meta.touched ? 'input-error' : 'formInput__input'} />
+          <input
+            {...input}
+            type={type}
+            placeholder={placeholder}
+            autoComplete='new-password'
+            className={meta.error && meta.touched ? 'input-error' : 'formInput__input'}
+          />
         )}
       </div>
     )}

@@ -11,7 +11,7 @@ npm run dev
 ```
 Страница сваггера:  http://localhost:8080/swagger-ui/index.html#/
 
-Для создание таблиц бд надо в папке demo\src\main\resources\database запустить initDB.sql и загрузить данные из таблиц persons.csv, transactions.csv, cfoes.csv, all_id.csv
+Для создания таблиц бд надо в папке demo\src\main\resources\database запустить initDB.sql и загрузить данные из таблиц persons.csv, transactions.csv, cfoes.csv, all_id.csv
 
 
 

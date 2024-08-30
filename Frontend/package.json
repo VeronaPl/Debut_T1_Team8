@@ -7,7 +7,10 @@
     "dev": "vite --port 5173",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "server": "json-server --watch src/db.json --port 5000",
+    "prettier": "prettier --check '**/**/*.{js,jsx,ts,tsx,css,scss}'",
+    "prettier:fix": "prettier --write '**/**/*.{js,jsx,ts,tsx,css,scss}'"
   },
   "dependencies": {
     "@emotion/react": "^11.13.0",
@@ -15,14 +18,20 @@
     "@mui/icons-material": "^5.16.7",
     "@mui/material": "^5.16.7",
     "final-form": "^4.20.10",
+    "json-server": "^1.0.0-beta.2",
+    "mdb-react-ui-kit": "^8.0.0",
+    "mdbreact": "^5.2.0",
     "mobx": "^6.13.1",
     "mobx-react-lite": "^4.0.7",
+    "prettier": "^3.3.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-final-form": "^6.5.9",
+    "react-multi-select-component": "^4.3.4",
     "react-responsive": "^10.0.0",
     "react-router": "^6.26.1",
     "react-router-dom": "^6.26.1",
+    "react-select": "^5.8.0",
     "sass": "^1.77.8",
     "styled-components": "^6.1.12"
   },

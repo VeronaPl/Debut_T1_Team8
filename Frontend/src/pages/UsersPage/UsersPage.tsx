@@ -1,11 +1,12 @@
 import React from 'react';
 import './UsersPage.scss';
+import { DataAnaliz } from '../../features';
 
-
-export const UsersPage = ():JSX.Element => {
-    return (
-        <div>
-            <h1>Список пользователей</h1>
-        </div>
-    );
-}
+export const UsersPage = (): JSX.Element => {
+  return (
+    <div>
+      <h1 className='MainContent__title withoutButton'>Список пользователей</h1>
+      <DataAnaliz needFilterSection={false} />
+    </div>
+  );
+};

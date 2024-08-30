@@ -1,39 +1,40 @@
 @import '../../app/App.scss';
 
 .form {
-    &__container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        margin: 1em auto;
-    }
+  &__container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 1em auto;
+  }
 
-    &__title {
-        margin-bottom: 0.5em;
-    }
+  &__title {
+    margin-bottom: 0.5em;
+    font-weight: 900;
+  }
 }
 
 @media (max-width: 1280px) {
-    .form {
-        &__title {
-            font-size: 1.8rem;
-        }
+  .form {
+    &__title {
+      font-size: 1.8rem;
     }
+  }
 }
 
 @media (max-width: 1000px) {
-    .form {
-        &__title {
-            font-size: 1.7rem;
-        }
+  .form {
+    &__title {
+      font-size: 1.7rem;
     }
+  }
 }
 
 @media (max-width: 768px) {
-    .form {
-        &__title {
-            font-size: 1.5rem;
-        }
+  .form {
+    &__title {
+      font-size: 1.5rem;
     }
+  }
 }
