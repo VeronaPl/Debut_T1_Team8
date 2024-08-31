@@ -26,7 +26,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Objects;
 
 @Tag(name="Контроллер Авторизации")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "http://10.4.56.65")
 @RestController
 public class AuthController {
     @Autowired
