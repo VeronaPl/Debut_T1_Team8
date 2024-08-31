@@ -1,0 +1,58 @@
+version: "3"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:   
+      - "8080:8080"
+      
+    depends_on:
+      - db
+    environment:
+      
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/MyDB
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 12345
+    networks:
+      - app-network
+
+  db:
+    image: postgres:latest
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=12345
+      - POSTGRES_DB=MyDB
+    
+      
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+      
+      
+  frontend:
+    build:
+      context: /home/admin/Debut_T1_Team8/Frontend/
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - db
+      - app
+    networks:
+      - app-network
+      
+
+      
+ 
+
+volumes:
+  db-data:
+
+networks:
+  app-network:
+    driver: bridge
