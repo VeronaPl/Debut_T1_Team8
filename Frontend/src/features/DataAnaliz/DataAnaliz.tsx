@@ -15,6 +15,7 @@ import { MultiSelect } from 'react-multi-select-component';
 import Select from 'react-select';
 import { MDBIcon } from 'mdbreact';
 import { useNavigate } from 'react-router';
+import { cfdsTransactionsFiltered } from '../../shared/api/cfdsTransactionsFiltered';
 
 export const DataAnaliz = ({ needFilterSection = true }): JSX.Element => {
   // data
@@ -31,8 +32,8 @@ export const DataAnaliz = ({ needFilterSection = true }): JSX.Element => {
   // filter
   const [CFDs, setCFDs] = useState<CFDsProps[]>([]);
   const types = [
-    { label: 'Пользователю', value: 'ToUser' },
-    { label: 'Между ЦФО', value: 'BetweenCFDs' },
+    { label: 'Пользователю', value: 'cfoToPerson' },
+    { label: 'Между ЦФО', value: 'cfoToCFO' },
     { label: 'Покупка', value: 'Buy' }
   ];
   const [owners, setOwners] = useState<CFDsProps[]>([]);
@@ -64,11 +65,10 @@ export const DataAnaliz = ({ needFilterSection = true }): JSX.Element => {
 
   useEffect(() => {
     getFilteringOptionsCFDs();
-  }, [userStore.transactions, userStore.owners]);
+  }, [userStore.transactions, userStore.CFDs]);
 
   const getFilteringOptionsCFDs = () => {
     if (userStore.CFDs.length !== 0) {
-      console.log(userStore.CFDs);
       const uniqueCFDs = userStore.CFDs
         .filter(
           (cfd, index, self) =>
@@ -76,11 +76,12 @@ export const DataAnaliz = ({ needFilterSection = true }): JSX.Element => {
         )
         .map((cfd) => ({ label: cfd.cfoName, value: cfd.id }));
       setCFDs(uniqueCFDs);
+
     }
   };
 
   const sorting = (col: keyof UserTransactionsProps) => {
-    if (col !== 'date_time') {
+    if (col !== 'datatime') {
       if (order === 'asc') {
         const sorted = [...fullData].sort((a, b) =>
           a[col].toString().toLowerCase() > b[col].toString().toLowerCase() ? 1 : -1
@@ -136,12 +137,10 @@ export const DataAnaliz = ({ needFilterSection = true }): JSX.Element => {
       setFullData(
         arr.filter(
           (transaction: UserTransactionsProps) =>
-            ('username_sender' in transaction &&
-              transaction.username_sender.toString().toLowerCase().includes(search)) ||
-            ('username_recipient' in transaction &&
-              transaction.username_recipient.toString().toLowerCase().includes(search)) ||
-            ('id_sender' in transaction && transaction.id_sender.toString().toLowerCase().includes(search)) ||
-            ('id_recipient' in transaction && transaction.id_recipient.toString().toLowerCase().includes(search))
+            ('from' in transaction &&
+              transaction.from.toString().toLowerCase().includes(search)) ||
+            ('to' in transaction &&
+              transaction.to.toString().toLowerCase().includes(search))
         )
       );
     } else {
@@ -169,13 +168,17 @@ export const DataAnaliz = ({ needFilterSection = true }): JSX.Element => {
           setFullData(
             arr.filter(
               (transaction: UserTransactionsProps) =>
-                'type' in transaction &&
-                'owner' in transaction &&
-                transaction.type === 'BetweenCFDs' &&
-                (('username_sender' in transaction && transaction.username_sender in selectedCFDsArray) ||
-                  ('username_recipient' in transaction && transaction.username_recipient in selectedCFDsArray) ||
-                  ('id_sender' in transaction && transaction.id_sender in selectedCFDsArray) ||
-                  ('id_recipient' in transaction && transaction.id_recipient in selectedCFDsArray))
+                ('from' in transaction && transaction.from in selectedCFDsArray) ||
+                ('to' in transaction && transaction.to in selectedCFDsArray) ||
+                ('id_cfo_from' in transaction &&
+                'id_cfo_to' in transaction &&
+                userStore.userRole !== 'user' &&
+                transaction.type === 'cfoToCFO' &&
+                  ('id_cfo_from' in transaction && transaction.id_cfo_from !== null) &&
+                  ('id_cfo_to' in transaction && transaction.id_cfo_to !== null)) ||
+                (userStore.userRole === 'admin' && transaction.type === 'adminToCFO' &&
+                  ('id_cfo_to' in transaction && transaction.id_cfo_to !== null && transaction.id_cfo_to in selectedCFDsArray)) ||
+                ('id_cfo_from' in transaction && transaction.id_cfo_from !== null && transaction.id_cfo_from in selectedCFDsArray)
             )
           );
         }
@@ -203,17 +206,17 @@ export const DataAnaliz = ({ needFilterSection = true }): JSX.Element => {
             setFullData(
               arr.filter(
                 (transaction: UserTransactionsProps) =>
-                  'date_time' in transaction &&
-                  new Date(convertDateFormat(transaction.date_time.toString())) >= new Date(selectedDateStart)
+                  'datatime' in transaction &&
+                  new Date(convertDateFormat(transaction.datatime.toString())) >= new Date(selectedDateStart)
               )
             );
           } else {
             setFullData(
               arr.filter(
                 (transaction: UserTransactionsProps) =>
-                  'date_time' in transaction &&
-                  new Date(convertDateFormat(transaction.date_time.toString())) >= new Date(selectedDateStart) &&
-                  new Date(convertDateFormat(transaction.date_time.toString())) <= new Date(selectedDateEnd)
+                  'datatime' in transaction &&
+                  new Date(convertDateFormat(transaction.datatime.toString())) >= new Date(selectedDateStart) &&
+                  new Date(convertDateFormat(transaction.datatime.toString())) <= new Date(selectedDateEnd)
               )
             );
           }
@@ -231,17 +234,17 @@ export const DataAnaliz = ({ needFilterSection = true }): JSX.Element => {
             setFullData(
               arr.filter(
                 (transaction: UserTransactionsProps) =>
-                  'date_time' in transaction &&
-                  new Date(convertDateFormat(transaction.date_time.toString())) <= new Date(selectedDateEnd)
+                  'datatime' in transaction &&
+                  new Date(convertDateFormat(transaction.datatime.toString())) <= new Date(selectedDateEnd)
               )
             );
           } else {
             setFullData(
               arr.filter(
                 (transaction: UserTransactionsProps) =>
-                  'date_time' in transaction &&
-                  new Date(convertDateFormat(transaction.date_time.toString())) <= new Date(selectedDateEnd) &&
-                  new Date(convertDateFormat(transaction.date_time.toString())) >= new Date(selectedDateStart)
+                  'datatime' in transaction &&
+                  new Date(convertDateFormat(transaction.datatime.toString())) <= new Date(selectedDateEnd) &&
+                  new Date(convertDateFormat(transaction.datatime.toString())) >= new Date(selectedDateStart)
               )
             );
           }
@@ -477,9 +480,9 @@ export const DataAnaliz = ({ needFilterSection = true }): JSX.Element => {
           <MDBTableHead light>
             <tr className='dataAnaliz__table__head' style={{ fontSize: '18px', fontWeight: '600' }}>
               <th scope='col'>№</th>
-              <th scope='col' className='hoverable' onClick={() => sorting('username_sender')}>
+              <th scope='col' className='hoverable' onClick={() => sorting('from')}>
                 Отправитель{' '}
-                {sortType === 'username_sender' && (
+                {sortType === 'from' && (
                   <span>
                     <MDBIcon
                       fas
@@ -489,9 +492,9 @@ export const DataAnaliz = ({ needFilterSection = true }): JSX.Element => {
                   </span>
                 )}
               </th>
-              <th scope='col' className='hoverable' onClick={() => sorting('username_recipient')}>
+              <th scope='col' className='hoverable' onClick={() => sorting('to')}>
                 Получатель{' '}
-                {sortType === 'username_recipient' && (
+                {sortType === 'to' && (
                   <span>
                     <MDBIcon
                       fas
@@ -513,9 +516,9 @@ export const DataAnaliz = ({ needFilterSection = true }): JSX.Element => {
                   </span>
                 )}
               </th>
-              <th scope='col' className='hoverable' onClick={() => sorting('date_time')}>
+              <th scope='col' className='hoverable' onClick={() => sorting('datatime')}>
                 Дата
-                {sortType === 'date_time' && (
+                {sortType === 'datatime' && (
                   <span>
                     <MDBIcon
                       fas
@@ -543,21 +546,21 @@ export const DataAnaliz = ({ needFilterSection = true }): JSX.Element => {
                   <td
                     className='clickable'
                     onClick={() => {
-                      route(`/${transaction.username_sender}`);
+                      route(`/${transaction.from}`);
                     }}
                   >
-                    {transaction.username_sender}
+                    {transaction.from}
                   </td>
                   <td
                     className='clickable'
                     onClick={() => {
-                      route(`/${transaction.username_recipient}`);
+                      route(`/${transaction.to}`);
                     }}
                   >
-                    {transaction.username_recipient}
+                    {transaction.to}
                   </td>
                   <td>{transaction.sum}</td>
-                  <td>{transaction.date_time}</td>
+                  <td>{transaction.datatime}</td>
                 </tr>
               </MDBTableBody>
             ))
