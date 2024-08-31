@@ -5,7 +5,8 @@ import Select from 'react-select';
 import { userStore } from '../../app/store/userStore';
 import { LoginButton } from '../../shared/ui';
 import { Field, Form } from 'react-final-form';
-import { ModalInput } from '../../shared/ui';
+import { createTransaction } from '../../shared/api';
+import { createTransactionProps } from '../../shared/api/createTransaction';
 
 const cfds = [...userStore.CFDs].map((el) => el.label);
 const owners = [...userStore.owners].map((el) => el.label);
@@ -18,11 +19,12 @@ type ModalCreateProps = {
 };
 
 interface ModalCreateValues {
-  CFDName: string;
-  ownerName?: string;
-  period?: string;
-  summi: string;
-  reason: string;
+  id: number;
+  cfoName: string;
+  owner: string;
+  finalDate: string;
+  sum: number;
+  basicSum: number;
 }
 
 const validate = (values: ModalCreateValues) => {
@@ -57,10 +59,11 @@ export const ModalCreate = ({ modalWindow, setModalWindow, title, typeModal }: M
   const [selectedOwner, setSelectedOwner] = useState<string>('');
   const [selectedPeriod, setSelectedPeriod] = useState<string>('');
 
-  const createTransaction = async (values: ModalCreateValues) => {
-    console.log('Modal values:', values);
+  const createTransaction = async (values: createTransactionProps[]) => {
+    await createTransaction({AllcfoId: values[0], newSum: Number(values[1]), comment: values[2]});
     setModalWindow();
   };
+
 
   return (
     <ModalWindow modalWindow={modalWindow} setModalWindow={setModalWindow} title={title}>
@@ -79,7 +82,7 @@ export const ModalCreate = ({ modalWindow, setModalWindow, title, typeModal }: M
                     </label>
                     <Select
                       className='dataAnaliz__filterSection__select__item'
-                      options={[...userStore.CFDs]}
+                      options={[...userStore.CFDs].map((el) => ({label: el.cfoName, value: el.id}))}
                       value={selectedCFD}
                       name='CFDTransaction'
                       onChange={(e) => setSelectedCFD(e)}
@@ -103,13 +106,12 @@ export const ModalCreate = ({ modalWindow, setModalWindow, title, typeModal }: M
                       Причина перевода
                     </label>
                     <div className='textarea_wrap'>
-                      <div
+                      <textarea
                         contentEditable='true'
                         className='dataAnaliz__filterSection__select__item customInput textarea'
-                        name='reason'
                         value={selectedReason}
-                        onChange={(e) => setSelectedReason(e.target.value)}
-                      ></div>
+                        onChange={(e) => {setSelectedReason(e.target.value)}}
+                      ></textarea><br/>
                       <span className='dataAnaliz__filterSection__select__label span'>Не более 50 символов</span>
                     </div>
                   </div>
@@ -117,9 +119,8 @@ export const ModalCreate = ({ modalWindow, setModalWindow, title, typeModal }: M
                   <div className='ModalCreate__content__item__btn'>
                     <LoginButton
                       title='Отправить'
-                      type='submit'
                       color='green'
-                      onClick={() => createTransaction([selectedCFD, selectedSum, selectedReason])}
+                      onClick={() => {createTransaction([selectedCFD.value, selectedSum, selectedReason])}}
                     />
                   </div>
                 </>
@@ -180,7 +181,7 @@ export const ModalCreate = ({ modalWindow, setModalWindow, title, typeModal }: M
                       title='Отправить'
                       type='submit'
                       color='green'
-                      onClick={() => createTransaction([selectedCFD, selectedSum, selectedReason])}
+                      onClick={() => createTransaction([selectedCFD.id, selectedSum, selectedReason])}
                     />
                   </div>
                 </>
